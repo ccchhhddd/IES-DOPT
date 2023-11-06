@@ -79,7 +79,7 @@
             </n-spin>
           </n-tab-pane>
 
-          <!-- <n-tab-pane name='优化计算参数输入'>
+          <n-tab-pane name='优化计算参数输入'>
             <n-spin size="large" :show="isCalculating">
               <template #description>
                 正在计算中，请稍等......
@@ -91,14 +91,14 @@
                 <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
                   :disabled='(modeChoosed < 3) && (ind == 4)'>
                   <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
-                    <n-input-number v-for="(val_input, key_input, ind_input) in (val as { [key: string]: number; })"
-                      v-model:value='val[key_input as keyof typeof val]'
-                      :disabled="(modeChoosed >= 2 && key_input == '卖电电价（￥/kwh）') || (modeChoosed == 3 && key_input == '买电电价（￥/kwh）') ||
-                        (ind <= 4 && ind_input == 0 && isOptimizationGroup.indexOf(isOptimizationOptions[ind].value) >= 0)" :placeholder='val_input.toString()'
+                    <n-input v-for="(val_input, key_input,) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='工质')) as { [key: string]: number })"
+										v-model:value='val[key_input as keyof typeof val]' :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"
+                       :placeholder='val_input.toString()'
                       :parse="parse" :format="format">
                       <template #prefix>{{ key_input }}： </template>
-                    </n-input-number>
-
+                    </n-input>
+										<p>工质：</p>
+                    <n-select v-model:value="val['工质']" :options="wfOptions" @update:value="(value: string, options: SelectOption)=>val['工质']=value" :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"/>
                   </n-space>
                 </n-collapse-item>
                 <n-divider></n-divider>
@@ -106,7 +106,7 @@
               <n-button size='large' type='info' strong round style='width: 100%;'
                 :on-click="optimizeToServer">点击进行优化计算</n-button>
             </n-spin>
-          </n-tab-pane> -->
+          </n-tab-pane>
         </n-tabs>
       </n-card>
     </n-grid-item>
@@ -417,31 +417,14 @@ const simulationParamsInput = ref<SimulationParams>({
   }
 });
 
-// const isOptimizationGroup = ref<Array<number>>([2])
-// const optimizationTime = ref<number>(1)
+const isOptimizationGroup = ref<Array<number>>([2])
+const optimizationTime = ref<number>(1)
 const isOptimizationOptions = ref([
   {
     label: '光伏容量',
     value: 0
   },
-  {
-    label: '风电容量',
-    value: 1
-  },
-  {
-    label: '电解容量',
-    value: 2
-  },
-  {
-    label: '储氢容量',
-    value: 3,
-    disabled: true
-  },
-  {
-    label: '储能容量',
-    value: 4,
-    disabled: true
-  }
+
 ]);
 
 // 监测isOptimizationGroup的值是否改变
@@ -456,12 +439,14 @@ const figureData = ref<FigureData>({ xyAxis: [] }) // 图数据
 // 模式选择数据更新
 function updateModeSelectData(value: number, options: SelectOption) {
   if (value == 1) {
-    isOptimizationOptions.value[4].disabled = true;
+    // isOptimizationOptions.value[4].disabled = true;
   } else {
-    isOptimizationOptions.value[4].disabled = false;
+    // isOptimizationOptions.value[4].disabled = false;
   }
   tableData.value = [];
 }
+
+
 // 工质选择数据更新
 // function updatewfSelectData(value: number, options: SelectOption) {
 //   if (value == 1) {
@@ -567,39 +552,39 @@ function simulateToServer() {
     );
 }
 
-// function optimizeToServer() {
-//   isCalculating.value = true;
-//   let isOptimizationList = Object.values(isOptimizationOptions.value).map((val) => {
-//     return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
-//   });
-//   request.post('/optimization', {
-//     "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value }),
-//     "mode": modeChoosed.value,
-//     "isopt": isOptimizationList
-//   }).then((response) => {
-//     isCalculating.value = false;
-//     if (!isNull(response.error)) {
-//       message.error('计算失败');
-//       return;
-//     }
-//     message.success('计算成功');
-//     let backEndData = response.data as BackEndData;
-//     tableData.value.push(backEndData.table);
-//     tableColumns.value = Object.keys(backEndData.table).map((key) => {
-//       return {
-//         title: key,
-//         key: key,
-//         width: 80,
-//         resizable: true,
-//         maxWidth: 200,
-//       }
-//     });
-//     figureData.value = backEndData.figure;
-//     updateFigure(dayChoiceSlider.value);
-//   }, (error) => {
-//     console.log(error);
-//   });
-// }
+function optimizeToServer() {
+  isCalculating.value = true;
+  let isOptimizationList = Object.values(isOptimizationOptions.value).map((val) => {
+    return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
+  });
+  request.post('/optimization', {
+    "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value }),
+    "mode": modeChoosed.value,
+    "isopt": isOptimizationList
+  }).then((response) => {
+    isCalculating.value = false;
+    if (!isNull(response.error)) {
+      message.error('计算失败');
+      return;
+    }
+    message.success('计算成功');
+    let backEndData = response.data as BackEndData;
+    tableData.value.push(backEndData.table);
+    tableColumns.value = Object.keys(backEndData.table).map((key) => {
+      return {
+        title: key,
+        key: key,
+        width: 80,
+        resizable: true,
+        maxWidth: 200,
+      }
+    });
+    figureData.value = backEndData.figure;
+    // updateFigure(dayChoiceSlider.value);
+  }, (error) => {
+    console.log(error);
+  });
+}
 
 // 输入框格式化
 const format = (value: number | null) => {
