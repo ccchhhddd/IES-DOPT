@@ -11,7 +11,7 @@
 前端 docke 镜像生成，-f 指定了 Dockerfile 文件的路径。
 
 ```powershell
-docker build -t cnpc -f .\docker\Dockerfile .
+docker build -t cnpc -f ./docker/Dockerfile .
 ```
 
 ## 使用说明
