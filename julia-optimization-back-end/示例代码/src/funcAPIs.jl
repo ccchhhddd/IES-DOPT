@@ -1,13 +1,13 @@
 @info "导入 funcAPIs.jl..."
 # 生成前端图表数据
 
-getFigureData(sol, ::Val{1}) = Dict(
+getFigureData(sol, ::Val{3}) = Dict(
     "储能供电量" => map(x -> x < 0 ? round(-x, digits=1) : 0, sol["BAT₊ΔE(t)"]),
     "风力发电量" => round.(sol["WT₊W(t)"], digits=1),
     "光伏发电量" => round.(sol["PV₊W(t)"], digits=1),
     "电解用电量" => round.(-sol["AEC₊W(t)"], digits=1),
     "储能充电量" => map(x -> x >= 0 ? round(-x, digits=1) : 0, sol["BAT₊ΔE(t)"]),
-    # "储氢用电量" => map(x -> x >= 0 ? round(x, digits=1) : 0, sol["HT₊ΔE(t)"]),
+    #"储氢用电量" => map(x -> x >= 0 ? round(x, digits=1) : 0, sol["HT₊ΔE(t)"]),
 )
 
 
@@ -18,10 +18,7 @@ getTableData(table) = [Dict("items" => k, "value" => round(v, digits=2)) for (k,
 1：风光制氢离网
 =#
 
-
-
-optimization(paras, isOptList, ::Val{1}) = optimization_RE2H2(
-    S3_data_GI, S3_data_Ta, S3_data_WS, S3_data_H2L,
+optimization(paras, isOptList, ::Val{3}) = optimization_RE2H2(S3_data_GI, S3_data_Ta, S3_data_WS, S3_data_H2L,
   Dict(:E_rated => paras["光伏参数"]["装机容量（千瓦）"],
         :E_device_rated => paras["光伏参数"]["单位设备容量（kW）"],
         :η_inverter => paras["光伏参数"]["综合效率"],
@@ -47,12 +44,12 @@ optimization(paras, isOptList, ::Val{1}) = optimization_RE2H2(
         :cost_replace => paras["电解槽参数"]["替换成本（￥/kW）"]),
     Dict(
         :E_rated => paras["储氢参数"]["装机容量（吨）"],
-        :E_device_rated => paras["储氢参数"]["单位设备容量（kW）"],
+        :E_device_rated => paras["储氢参数"]["单位设备容量（吨）"],
         :SoC_cha_thre => paras["储氢参数"]["充能阈值"],
         :life_year => paras["储氢参数"]["产品寿命（年）"],
-        :cost_initial => paras["储氢参数"]["投资成本（￥/kW）"],
-        :cost_OM => paras["储氢参数"]["运维成本（￥/kW）"],
-        :cost_replace => paras["储氢参数"]["替换成本（￥/kW）"]),
+        :cost_initial => paras["储氢参数"]["投资成本（￥/吨）"],
+        :cost_OM => paras["储氢参数"]["运维成本（￥/吨）"],
+        :cost_replace => paras["储氢参数"]["替换成本（￥/吨）"]),
     Dict(
         :E_rated => paras["储能参数"]["装机容量（千瓦时）"],
         :E_device_rated => paras["储能参数"]["单位设备容量（kW）"],
@@ -64,7 +61,7 @@ optimization(paras, isOptList, ::Val{1}) = optimization_RE2H2(
     ),
     isOptList,
     1e2 * ones(length(isOptList)),
-    1e6 * ones(length(isOptList));
+    1e6 * ones(length(isOptList)),
     n_sys=paras["经济性参数"]["系统运营年限（年）"],
     rate_discount=paras["经济性参数"]["目标收益率"],
     rate_tax=paras["经济性参数"]["综合税率"],
@@ -74,5 +71,4 @@ optimization(paras, isOptList, ::Val{1}) = optimization_RE2H2(
     gas_factor=paras["经济性参数"]["气电碳排放因子（kg/kWh）"],
     coal_factor=paras["经济性参数"]["煤电碳排放因子（kg/kWh）"],
     max_opt_time=paras["优化时长"]
-);
-
+)

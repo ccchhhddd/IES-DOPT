@@ -14,7 +14,6 @@ const S3_data_H2L = [5285.41 for _ in 1:8760]
 
 const param_PV = Dict(:E_rated => 5e5, :E_device_rated => 0.65 * 1000, :η_inverter => 1.0,
     :life_year => 20.0, :cost_initial => 3800.0, :cost_OM => 190.0, :cost_replace => 3800.0) # 50万kW
-
 const param_WT = Dict(:E_rated => 5e5, :E_device_rated => 5000.0, :η_inverter => 0.95,
     :life_year => 20.0, :cost_initial => 4800.0 + 100.0, :cost_OM => 720.0, :cost_replace => 4800.0 + 100.0)# 50万kW, 成本+逆变器
 const param_AEC = Dict(:E_rated => 5e5, :E_device_rated => 5000.0, :η_inverter => 1.0,
