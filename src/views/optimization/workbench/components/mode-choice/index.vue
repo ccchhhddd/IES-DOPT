@@ -39,12 +39,12 @@
         <n-space justify='center'>
           <p class='text-28px font-bold pb-12px'>系统图</p>
         </n-space>
-        <n-space v-if='modeChoosed == 1' justify='center'>
+        <!-- <n-space v-if='modeChoosed == 1' justify='center'>
           <n-image src="/余电上网连续制氢.png" alt="mode-choice" width="600" />
         </n-space>
         <n-space v-if='modeChoosed == 2' justify='center'>
           <n-image src="/余电不网连续制氢.png" alt="mode-choice" width="600" />
-        </n-space>
+        </n-space> -->
         <n-space v-if='modeChoosed == 3' justify='center'>
           <n-image src="/离网制氢模式.png" alt="mode-choice" width="600" />
         </n-space>
@@ -164,7 +164,7 @@ const props = defineProps({
   },
 });
 
-const modeChoosed = ref<number>(1); //  1: 风光制氢余电上网 2: 风光制氢余电不上网 3: 离网制氢模式
+const modeChoosed = ref<number>(3); //  1: 风光制氢余电上网 2: 风光制氢余电不上网 3: 离网制氢模式
 // 经纬度数据
 const longitude = ref<number>(0.0);
 const latitude = ref<number>(0.0);
@@ -176,14 +176,14 @@ const dayChoiceSlider = ref<number>(1);
 
 // 模式选择选项
 const modeOptions = [
-  {
-    label: '风光制氢余电上网',
-    value: 1
-  },
-  {
-    label: '风光制氢余电不上网',
-    value: 2
-  },
+  // {
+  //   label: '风光制氢余电上网',
+  //   value: 1
+  // },
+  // {
+  //   label: '风光制氢余电不上网',
+  //   value: 2
+  // },
   {
     label: '离网制氢模式',
     value: 3
