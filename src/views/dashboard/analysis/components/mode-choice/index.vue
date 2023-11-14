@@ -79,7 +79,7 @@
             </n-spin>
           </n-tab-pane>
 
-          <n-tab-pane name='优化计算参数输入'>
+          <!-- <n-tab-pane name='优化计算参数输入'>
             <n-spin size="large" :show="isCalculating">
               <template #description>
                 正在计算中，请稍等......
@@ -106,7 +106,7 @@
               <n-button size='large' type='info' strong round style='width: 100%;'
                 :on-click="optimizeToServer">点击进行优化计算</n-button>
             </n-spin>
-          </n-tab-pane>
+          </n-tab-pane> -->
         </n-tabs>
       </n-card>
     </n-grid-item>

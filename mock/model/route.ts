@@ -51,7 +51,7 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
         path: '/optimization/workbench',
         component: 'self',
         meta: {
-          title: '第一个优化问题',
+          title: '制氢优化问题',
           requiresAuth: true,
           icon: 'icon-park-outline:analysis'
         }
