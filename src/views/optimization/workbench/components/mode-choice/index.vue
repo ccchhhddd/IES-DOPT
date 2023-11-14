@@ -1,5 +1,5 @@
 <template>
-  <n-divider title-placement='center'>{{ props.title + props.description }}青海风光制氢一体化新能源项目</n-divider>
+  <n-divider title-placement='center'>{{ props.title + props.description }}制氢优化问题</n-divider>
 
   <!-- 第一行 模式选择与经纬度-->
   <n-grid :x-gap='16' :y-gap='16' :item-responsive='true' class='pb-15px'>
