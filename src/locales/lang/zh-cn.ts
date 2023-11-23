@@ -3,7 +3,7 @@ import type { LocaleMessages } from 'vue-i18n';
 const locale: LocaleMessages<I18nType.Schema> = {
   message: {
     system: {
-      title: '综合能源优化设计平台'
+      title: '综合能源设计优化平台'
     },
     routes: {
       dashboard: {
