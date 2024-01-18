@@ -14,17 +14,7 @@ const dashboard: AuthRoute.Route = {
         i18nTitle: 'message.routes.dashboard.analysis'
       }
     },
-    {
-      name: 'dashboard_workbench',
-      path: '/dashboard/workbench',
-      component: 'self',
-      meta: {
-        title: '工作台',
-        requiresAuth: true,
-        icon: 'icon-park-outline:workbench',
-        i18nTitle: 'message.routes.dashboard.workbench'
-      }
-    }
+
   ],
   meta: {
     title: '仪表盘',

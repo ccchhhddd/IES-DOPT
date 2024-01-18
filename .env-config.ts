@@ -7,10 +7,10 @@ const serviceEnv: ServiceEnv = {
     url: 'http://127.0.0.1:8080'
   },
   test: {
-    url: 'http://121.40.92.145:8080'
+    url: 'http://123.57.89.130:8080'
   },
   prod: {
-    url: 'http://121.40.92.145:8080'
+    url: 'http://123.57.89.130:8080'
   }
 };
 

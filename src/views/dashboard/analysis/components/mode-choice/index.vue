@@ -38,13 +38,13 @@
           <p class="text-28px font-bold pb-12px">系统图</p>
         </n-space>
         <n-space v-if="modeChoosed == 1" justify="center">
-          <n-image src="../系统图/朗肯循环.png" alt="mode-choice" width="600" />
+          <n-image src="/朗肯循环.png" alt="mode-choice" width="600" />
         </n-space>
         <n-space v-if='modeChoosed == 2' justify='center'>
-          <n-image src="../系统图/再热循环.png" alt="mode-choice" width="600" />
+          <n-image src="/再热循环.png" alt="mode-choice" width="600" />
         </n-space>
         <n-space v-if='modeChoosed == 3' justify='center'>
-          <n-image src="../系统图/制冷循环.png" alt="mode-choice" width="600" />
+          <n-image src="/制冷循环.png" alt="mode-choice" width="600" />
         </n-space>
       </n-card>
     </n-grid-item>

@@ -1,4 +1,4 @@
-# IES-DOPT 综合能源系统设计优化平台开发项目
+# IES-DOPT 综合能源系统仿真优化平台开发项目
 
 ## 本项目所使用使用前端框架
 
@@ -8,13 +8,45 @@
 
 ## 部署服务器
 
-前端 docke 镜像生成，-f 指定了 Dockerfile 文件的路径。
+### 前端部署
 
-```powershell
-docker build -t cnpc -f ./docker/Dockerfile .
+1.对项目文件进行本地打包生成dist文件夹
+```
+npm run build
+```
+2.执行命令运行Dockerfile文件，对采用ngnix服务的前端项目进行docker镜像封装
+```
+docker build -t front_end -f .\docker\Dockerfile .
+```
+3.对生成的docker镜像进行改名操作(dockerhub用户名/镜像名)
+```
+docker tag front_end chenghd/front_end
+```
+4.将镜像push到远端dockerhub仓库
+```
+push chenghd/front_end
+```
+5.在服务器端拉取远端镜像
+```
+docker pull chenghd/front_end
+```
+6.在服务器端运行docker镜像生成docker容器
+```
+docker run --name front -p 80:80 -d chenghd/front_end
 ```
 
-## 使用说明
+### 后端部署(探索中)
+```
+using PackageCompiler
+```
+```
+create_app("julia-simulation-back-end", "backendCompiled", force=true, incremental=true)
+```
+```
+docker build -t backend .
+```
+
+## 使用说明(本地开发者模式)
 
 ### 先将项目克隆到本地
 #### 方法一：使用GitKraken进行项目克隆及项目相关操作（推荐）
@@ -58,3 +90,6 @@ npm run dev ——————运行程序
 ```
 
 初次进行仿真运算时间会略长，请耐心等待
+
+
+

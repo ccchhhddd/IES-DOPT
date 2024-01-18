@@ -9,7 +9,6 @@ const locale: LocaleMessages<I18nType.Schema> = {
       dashboard: {
         _value: '仪表盘',
         analysis: '分析页',
-        workbench: '工作台'
       },
       document: {
         _value: '文档',

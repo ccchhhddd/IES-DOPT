@@ -40,30 +40,7 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
       icon: 'mdi:monitor-dashboard',
       order: 1
     }
-  },
-	{
-		name: 'optimization',
-		path: '/optimization',
-		component: 'basic',
-		children: [
-			{
-        name: 'optimization_workbench',
-        path: '/optimization/workbench',
-        component: 'self',
-        meta: {
-          title: '制氢优化问题',
-          requiresAuth: true,
-          icon: 'icon-park-outline:analysis'
-        }
-      },
-
-		],
-		meta: {
-			title: '优化',
-			icon: 'icon-park-outline:workbench',
-			order: 2
-		}
-	}],
+  },],
   admin: [],
   user: []
 };
