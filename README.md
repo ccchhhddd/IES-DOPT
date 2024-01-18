@@ -24,7 +24,7 @@ docker tag front_end chenghd/front_end
 ```
 4.将镜像push到远端dockerhub仓库
 ```
-push chenghd/front_end
+docker push chenghd/front_end
 ```
 5.在服务器端拉取远端镜像
 ```
