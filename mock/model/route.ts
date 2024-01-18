@@ -14,16 +14,16 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
           icon: 'icon-park-outline:analysis'
         }
       },
-      // {
-      //   name: 'dashboard_workbench',
-      //   path: '/dashboard/workbench',
-      //   component: 'self',
-      //   meta: {
-      //     title: '风光煤气储',
-      //     requiresAuth: true,
-      //     icon: 'icon-park-outline:workbench',
-      //   }
-      // },
+      {
+        name: 'dashboard_workbench',
+        path: '/dashboard/workbench',
+        component: 'self',
+        meta: {
+          title: '顺流与逆流式换热器',
+          requiresAuth: true,
+          icon: 'icon-park-outline:workbench',
+        }
+      },
       // {
       //   name: 'dashboard_scenario',
       //   path: '/dashboard/scenario',

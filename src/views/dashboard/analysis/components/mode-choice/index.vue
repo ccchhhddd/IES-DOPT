@@ -22,7 +22,7 @@
             <template #prefix>经度</template>
           </n-input-number>
           <n-input-number v-model:value='latitude' class='py-4px' placeholder='0.0'>
-            <template #prefix>纬度：</template>
+            <template #prefix>纬度</template>
           </n-input-number>
         </n-space>
       </n-card>
@@ -79,34 +79,34 @@
             </n-spin>
           </n-tab-pane>
 
-          <!-- <n-tab-pane name='优化计算参数输入'>
-            <n-spin size="large" :show="isCalculating">
-              <template #description>
-                正在计算中，请稍等......
-              </template>
-              <n-gradient-text :size="16">选择待优化容量参数:</n-gradient-text>
-              <n-select multiple placeholder="选择容量优化参数" v-model:options="isOptimizationOptions"
-                v-model:value="isOptimizationGroup" style='margin-bottom: 15px;margin-top: 5px;' />
-              <n-collapse :accordion="true">
-                <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
-                  :disabled='(modeChoosed < 3) && (ind == 4)'>
-                  <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
-                    <n-input v-for="(val_input, key_input,) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='工质')) as { [key: string]: number })"
-										v-model:value='val[key_input as keyof typeof val]' :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"
-                       :placeholder='val_input.toString()'
-                      :parse="parse" :format="format">
-                      <template #prefix>{{ key_input }}： </template>
-                    </n-input>
-										<p>工质：</p>
-                    <n-select v-model:value="val['工质']" :options="wfOptions" @update:value="(value: string, options: SelectOption)=>val['工质']=value" :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"/>
-                  </n-space>
-                </n-collapse-item>
-                <n-divider></n-divider>
-              </n-collapse>
-              <n-button size='large' type='info' strong round style='width: 100%;'
-                :on-click="optimizeToServer">点击进行优化计算</n-button>
-            </n-spin>
-          </n-tab-pane> -->
+          // <!-- <n-tab-pane name='优化计算参数输入'>
+          //   <n-spin size="large" :show="isCalculating">
+          //     <template #description>
+          //       正在计算中，请稍等......
+          //     </template>
+          //     <n-gradient-text :size="16">选择待优化容量参数:</n-gradient-text>
+          //     <n-select multiple placeholder="选择容量优化参数" v-model:options="isOptimizationOptions"
+          //       v-model:value="isOptimizationGroup" style='margin-bottom: 15px;margin-top: 5px;' />
+          //     <n-collapse :accordion="true">
+          //       <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
+          //         :disabled='(modeChoosed < 3) && (ind == 4)'>
+          //         <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+          //           <n-input v-for="(val_input, key_input,) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='工质')) as { [key: string]: number })"
+					// 					v-model:value='val[key_input as keyof typeof val]' :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"
+          //              :placeholder='val_input.toString()'
+          //             :parse="parse" :format="format">
+          //             <template #prefix>{{ key_input }}： </template>
+          //           </n-input>
+					// 					<p>工质：</p>
+          //           <n-select v-model:value="val['工质']" :options="wfOptions" @update:value="(value: string, options: SelectOption)=>val['工质']=value" :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"/>
+          //         </n-space>
+          //       </n-collapse-item>
+          //       <n-divider></n-divider>
+          //     </n-collapse>
+          //     <n-button size='large' type='info' strong round style='width: 100%;'
+          //       :on-click="optimizeToServer">点击进行优化计算</n-button>
+          //   </n-spin>
+          // </n-tab-pane> -->
         </n-tabs>
       </n-card>
     </n-grid-item>
