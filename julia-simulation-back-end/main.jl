@@ -8,6 +8,7 @@ include("./components.jl")
 include("./simulation.jl")
 
 
+
 # #####实际运行时需注释掉此部分
 # #示例数据
 # paras = Dict("汽轮机出口压力" => 100000,
@@ -59,19 +60,23 @@ end
 end
 
 @post "/simulation_1" function (req)
-	# 将HTTP请求的正文（request body）转换为 Julia 中的字典（Dict）数据结构
 	paras = json(req)
 	# 调用后端模型获得数据
-	println(paras)
-
-	#figure,table = simulate_1!(paras["inputdata"],Val(paras["mode"]))
+	#println(paras)
+	table,figure1,figure2 = simulate_1!(paras["inputdata"],Val(paras["mode"]))
 	#println(figure)
 	# 返回数据，匹配前端request要求的格式
 	return Dict(
-		"code" => 200,
-		"message" => "success",
-		"data" => 0
-			)
+    "code" => 200,
+    "message" => "success",
+    "data" => Dict(
+    # "table" => getTableData(table),
+      "table" => OrderedDict(k => round(v, digits=2) for (k, v) in table),
+      "figure" => Dict(
+      "xyAxis" => figure1,
+			"xyAxis1" => figure2
+      )
+    ))
 end
 
 @get "hello" function (req)
