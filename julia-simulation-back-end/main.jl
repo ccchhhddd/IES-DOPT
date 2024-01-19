@@ -8,17 +8,6 @@ include("./components.jl")
 include("./simulation.jl")
 
 
-
-# #####实际运行时需注释掉此部分
-# #示例数据
-# paras = Dict("汽轮机出口压力" => 100000,
-#             "水泵出口压力" => 700000,
-#             "锅炉出口温度" => 701)
-# #调用后端模型获得数据
-# Data1 = simulate!(paras)
-# #####
-
-
 # 跨域解决方案
 const CORS_HEADERS = [
   "Access-Control-Allow-Origin" => "*",
@@ -43,7 +32,6 @@ end
   # 调用后端模型获得数据
   #table = simulate!(paras["inputdata"], Val(paras["mode"]))
   #println(paras)
-	println(paras)
   figure,table = simulate!(paras["inputdata"],Val(paras["mode"]))
   #println(figure)
   # 返回数据，匹配前端request要求的格式
@@ -74,7 +62,7 @@ end
       "table" => OrderedDict(k => round(v, digits=2) for (k, v) in table),
       "figure" => Dict(
       "xyAxis" => figure1,
-			"xyAxis1" => figure2
+			#"xyAxis1" => figure2
       )
     ))
 end
