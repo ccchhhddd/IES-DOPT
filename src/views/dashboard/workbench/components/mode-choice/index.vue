@@ -393,7 +393,9 @@ type BackEndData = {
 type SimulationParams = {
   仿真参数: {
     '热流体流量(kg/s)': number;
+    '热流体入口温度(K)': number;
     '冷流体流量(kg/s)': number;
+    '冷流体入口温度(K)': number;
     '换热管长度(m)':number;
   }
 };
@@ -401,7 +403,9 @@ type SimulationParams = {
 const simulationParamsInput = ref<SimulationParams>({
   仿真参数: {
     '热流体流量(kg/s)': 4,
+    '热流体入口温度(K)': 300,
 		'冷流体流量(kg/s)': 4,
+    '冷流体入口温度(K)': 300,
     '换热管长度(m)':10,
   }
 });
