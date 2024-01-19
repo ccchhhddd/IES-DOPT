@@ -38,10 +38,10 @@
           <p class="text-28px font-bold pb-12px">示意图</p>
         </n-space>
         <n-space v-if="modeChoosed == 1" justify="center">
-          <n-image src="/顺流.png" alt="mode-choice" width="600" />
+          <n-image src="/顺流.jpg" alt="mode-choice" width="600" />
         </n-space>
         <n-space v-if='modeChoosed == 2' justify='center'>
-          <n-image src="/逆流.png" alt="mode-choice" width="600" />
+          <n-image src="/逆流.jpg" alt="mode-choice" width="600" />
         </n-space>
         <!-- <n-space v-if='modeChoosed == 3' justify='center'>
           <n-image src="/制冷循环.png" alt="mode-choice" width="600" />
@@ -194,31 +194,31 @@ const modeOptions = [
 // 工质选择
 const wfOptions_H=[
 {
-	label:'liquid water',
-	value:'liquid water',
+	label:'Water',
+	value:'Water',
 },
 {
-	label:'air',
-	value:'air',
+	label:'Air',
+	value:'Air',
 },
 {
-	label:'liquid sodium',
-	value:'liquid sodium',
+	label:'Sodium',
+	value:'Sodium',
 },
 ]
 // 工质选择
 const wfOptions_C=[
 {
-	label:'liquid water',
-	value:'liquid water',
+	label:'Water',
+	value:'Water',
 },
 {
-	label:'air',
-	value:'air',
+	label:'Air',
+	value:'Air',
 },
 {
-	label:'liquid sodium',
-	value:'liquid sodium',
+	label:'Sodium',
+	value:'Sodium',
 },
 ]
 
