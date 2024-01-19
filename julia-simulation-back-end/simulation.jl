@@ -27,8 +27,8 @@ simulate_1!(paras,::Val{1}) = simulation_Heat_exchanger(Th = paras["仿真参数
 														Media_h = paras["仿真参数"]["热流体种类"],
 														Media_c = paras["仿真参数"]["冷流体种类"],
 														Flow_type = "parallel")
-simulate_1!(paras,::Val{2}) = simulation_Heat_exchanger(Th = paras["仿真参数"]["热流体入口温度(k)"],
-														Tc = paras["仿真参数"]["冷流体入口温度(k)"],
+simulate_1!(paras,::Val{2}) = simulation_Heat_exchanger(Th = paras["仿真参数"]["热流体入口温度(K)"],
+														Tc = paras["仿真参数"]["冷流体入口温度(K)"],
 														Qh = paras["仿真参数"]["热流体流量(kg/s)"],
 														Qc = paras["仿真参数"]["冷流体流量(kg/s)"],
 														L = paras["仿真参数"]["换热管长度(m)"],
@@ -283,16 +283,18 @@ function simulation_Heat_exchanger(;Th,Tc, Qh, Qc, L, Media_h::String,Media_c::S
 		#计算动态粘度
 		μ_h = CoolProp.PropsSI("V", "T", u[1], "P", p[3], p[4])
 		μ_c = CoolProp.PropsSI("V", "T", u[2], "P", p[3], p[9])
-		#计算雷诺数
-		Re_h = 4*p[1]/p[6]/μ_h/π
-		Re_c = 4*p[2]/p[7]/μ_c/π
 
 		#计算普朗特数
 		Pr_h = CoolProp.PropsSI("Prandtl", "T", u[1], "P", p[3], p[4])
 		Pr_c = CoolProp.PropsSI("Prandtl", "T", u[2], "P", p[3], p[9])
+
+		#计算雷诺数
+		Re_h = 4*p[1]/p[6]/μ_h/π
+		Re_c = 4*p[2]/p[7]/μ_c/π
+
 		#计算努塞尔数
 		if Re_c > 10000
-			Nu_c = 0.023*(Re_c^0.8)*(Pr_h^0.4)
+			Nu_c = 0.023*(Re_c^0.8)*(Pr_c^0.4)
 		else
 			Nu_c = 4.36
 		end
@@ -333,7 +335,7 @@ function simulation_Heat_exchanger(;Th,Tc, Qh, Qc, L, Media_h::String,Media_c::S
 		while abs(sol.u[end][2]-Tc) > 0.5
 			T_c_in = (u_0 + u_1)/2
 			p = [Qh,Qc,Ph,Media_h,Flow_type,d_i,d_o,T_c_in,Media_c]
-			u0 = [400;p[8]]
+			u0 = [Th;p[8]]
 			tspan = (0.0, L)
 			#求解
 			prob = ODEProblem(heat_exchanger!, u0, tspan, p)
@@ -351,30 +353,49 @@ function simulation_Heat_exchanger(;Th,Tc, Qh, Qc, L, Media_h::String,Media_c::S
 	display(plot(sol))
 
 	# 计算 Re
-	T_c = sol.u[1][2]
+	T_c = Tc
 	μ_c = CoolProp.PropsSI("V", "T", T_c, "P", p[3], p[9])
 	Re_c = 4 * p[2] / p[7] / μ_c / π
-	T_h = sol.u[2][2]
+	T_h = Th
 	μ_h = CoolProp.PropsSI("V", "T", T_h, "P", p[3], p[4])
 	Re_h = 4 * p[1] / p[6] / μ_h / π
 	if Re_c > 10000
-			println("Re_c =", Re_c, ",冷流是湍流")
+		Status_c = "湍流"
+		println("Re_c =", Re_c, ",冷流是湍流")
 	else
-			println("Re_c =", Re_c, ",冷流是层流")
+		Status_c = "层流"
+		println("Re_c =", Re_c, ",冷流是层流")
 	end
 	if Re_h > 10000
-			println("Re_h =", Re_h, ",热流是湍流")
+		Status_h = "湍流"
+		println("Re_h =", Re_h, ",热流是湍流")
 	else
-			println("Re_h =", Re_h, ",热流是层流")
+		Status_h = "层流"
+		println("Re_h =", Re_h, ",热流是层流")
 	end
 	# 计算传热率
 	Φ = (sol.u[1][1] - sol.u[end][1])*CoolProp.PropsSI("C", "T", sol.u[1][1], "P", p[3],p[4])*p[1]
-	println("传热效率Φ =", Φ," W")
+	println("换热效率Φ =", Φ," W")
 
-
-	table = OrderedDict("传热效率Φ" => Φ,
-	                    "热流雷诺数" => Re_h,
-	                    "冷流雷诺数" => Re_c)
+    if Flow_type == "parallel"
+	  table = OrderedDict("换热效率Φ(w)" => Φ,
+						"换热管长度(m)" => L,
+	          "热流雷诺数" => Re_h,
+						"热流状态" => Status_h,
+						"热流体出口温度(K)" => sol.u[end][1],
+	          "冷流雷诺数" => Re_c,
+						"冷流状态" => Status_c,
+						"冷流体出口温度(K)" => sol.u[end][2])
+	else
+	  table = OrderedDict("换热效率Φ(w)" => Φ,
+							"换热管长度(m)" => L,
+		          "热流雷诺数" => Re_h,
+							"热流状态" => Status_h,
+							"热流体出口温度(K)" => sol.u[end][1],
+		          "冷流雷诺数" => Re_c,
+							"冷流状态" => Status_c,
+							"冷流体出口温度(K)" => sol.u[1][2])
+	end
 
 	y1 = [sol.u[i][1] for i in 1:length(sol.t)]
 	y2 = [sol.u[i][2] for i in 1:length(sol.t)]

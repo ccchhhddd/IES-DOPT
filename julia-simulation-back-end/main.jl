@@ -59,10 +59,10 @@ end
     "message" => "success",
     "data" => Dict(
     # "table" => getTableData(table),
-      "table" => OrderedDict(k => round(v, digits=2) for (k, v) in table),
+      "table" =>table,
       "figure" => Dict(
       "xyAxis" => figure1,
-			#"xyAxis1" => figure2
+			"xyAxis1" => figure2
       )
     ))
 end

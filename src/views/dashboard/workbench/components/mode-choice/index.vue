@@ -19,10 +19,10 @@
         <p class='text-16px text-red inline-block'> *</p>
         <n-space justify='space-between'>
           <n-input-number v-model:value='longitude' class='py-4px ' placeholder='0.0'>
-            <template #prefix>经度</template>
+            <template #prefix>经度:</template>
           </n-input-number>
           <n-input-number v-model:value='latitude' class='py-4px' placeholder='0.0'>
-            <template #prefix>纬度</template>
+            <template #prefix>纬度:</template>
           </n-input-number>
         </n-space>
       </n-card>
@@ -119,7 +119,7 @@
   <n-space vertical>
     <n-card :bordered='false' class='rounded-16px shadow-sm'>
       <n-space justify='center'>
-        <p class='text-24px font-bold pb-12px'>T-X图</p>
+        <p class='text-24px font-bold pb-12px'>热流T-X图</p>
         <!-- <n-switch v-model:value="dayOrWeek" size="large" class='pt-15px' @update:value="updateSwich">
           <template #checked> 周数据图 </template>
           <template #unchecked> 日数据图 </template>
@@ -129,6 +129,20 @@
         :on-update:value="updateFigure" />
       <n-slider v-else v-model:value="dayChoiceSlider" :step="1" :max="52" :min="1" :on-update:value="updateFigure" /> -->
       <div ref='lineRef' class='w-full h-640px' style="margin-top: 15px;"></div>
+    </n-card>
+
+		<n-card :bordered='false' class='rounded-16px shadow-sm'>
+      <n-space justify='center'>
+        <p class='text-24px font-bold pb-12px'>冷流T-X图</p>
+        <!-- <n-switch v-model:value="dayOrWeek" size="large" class='pt-15px' @update:value="updateSwich">
+          <template #checked> 周数据图 </template>
+          <template #unchecked> 日数据图 </template>
+        </n-switch> -->
+      </n-space>
+      <!-- <n-slider v-if="!dayOrWeek" v-model:value="dayChoiceSlider" :step="1" :max="365" :min="1"
+        :on-update:value="updateFigure" />
+      <n-slider v-else v-model:value="dayChoiceSlider" :step="1" :max="52" :min="1" :on-update:value="updateFigure" /> -->
+      <div ref='lineRef1' class='w-full h-640px' style="margin-top: 15px;"></div>
     </n-card>
 
     <n-card :bordered="false" class="rounded-16px shadow-sm">
@@ -201,10 +215,7 @@ const wfOptions_H=[
 	label:'Air',
 	value:'Air',
 },
-{
-	label:'Sodium',
-	value:'Sodium',
-},
+
 ]
 // 工质选择
 const wfOptions_C=[
@@ -216,10 +227,7 @@ const wfOptions_C=[
 	label:'Air',
 	value:'Air',
 },
-{
-	label:'Sodium',
-	value:'Sodium',
-},
+
 ]
 
 //检测到模式选择变化时，打印出来
@@ -286,9 +294,9 @@ const lineOptions = ref<ECOption>({
   },
   xAxis: {
     type: 'value',
-    name: '熵(S)',
+    name: '距入口段距离',
     axisLabel: {
-      formatter: '{value} J/(mol*k)'
+      formatter: '{value} m'
     }
   },
   yAxis:
@@ -305,7 +313,7 @@ const lineOptions = ref<ECOption>({
   },
   series: [
     {
-      name: '朗肯循环',
+      name: '换热器',
       type: 'line',
       smooth: true,
       // stack: 'Total',
@@ -326,8 +334,87 @@ const lineOptions = ref<ECOption>({
       // 		[  5.4,    4.5  ]
       // ]
     },
+
+  ]
+}) as Ref<ECOption>;
+const { domRef: lineRef } = useEcharts(lineOptions);
+
+const lineOptions1 = ref<ECOption>({
+  //  显示工具箱
+  toolbox: {
+    show: true,
+    orient: 'vertical',
+    feature: {
+      //  保存为图片，背景为白色
+      saveAsImage: {
+        show: true,
+        type: 'png',
+        pixelRatio: 4
+      },
+      //  显示缩放按钮
+      dataZoom: {
+        show: true
+      },
+      //  显示类型切换按钮
+      magicType: {
+        show: true,
+        type: ['stack', 'line', 'bar']
+      },
+      dataView: {
+        show: true, // 是否显示该工具。
+        title: '数据视图',
+        readOnly: false, // 是否不可编辑（只读）
+        lang: ['数据视图', '关闭', '刷新'], // 数据视图上有三个话术，默认是['数据视图', '关闭', '刷新']
+        backgroundColor: '#fff', // 数据视图浮层背景色。
+        textareaColor: '#fff', // 数据视图浮层文本输入区背景色
+        textareaBorderColor: '#333', // 数据视图浮层文本输入区边框颜色
+        textColor: '#000', // 文本颜色。
+        buttonColor: '#c23531', // 按钮颜色。
+        buttonTextColor: '#fff' // 按钮文本颜色。
+      }
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7986'
+      }
+    }
+  },
+  legend: {
+    data: []
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+
+  },
+  xAxis: {
+    type: 'value',
+    name: '距入口段距离',
+    axisLabel: {
+      formatter: '{value} m'
+    }
+  },
+  yAxis:
+  {
+    type: 'value',
+    name: '温度(T)',
+    axisPointer: {
+      snap: true
+    },
+    // axisLine: { onZero: false },
+    axisLabel: {
+      formatter: '{value} K'
+    },
+  },
+  series: [
     {
-      name: '再热循环',
+      name: '换热器',
       type: 'line',
       smooth: true,
       // stack: 'Total',
@@ -336,42 +423,22 @@ const lineOptions = ref<ECOption>({
         focus: 'series'
       },
 
-      //     data: [
+      //   data: [
       //     // 维度X   维度Y   其他维度 ...
-      //     [  3.4,    4.5  ],
+      //     [  5.4,    4.5  ],
       // 		[  3.4,    4.5, ],
-      //     [  4.2,    2.3, ],
+      //     [  7.2,    2.3, ],
       //     [  10.8,   4,   ],
+      // 		[  9.8,   8.5,  ],
       // 		[  9.8,   9.5,  ],
-      // 		[  8.8,   9.5,  ],
-      // 		[  8.8,   7.5,  ],
-      // 		[  3.4,    4.5  ]
-      //  ]
+      // 		[  8.8,   4.5,  ],
+      // 		[  5.4,    4.5  ]
+      // ]
     },
-    {
-      name: '制冷循环',
-      type: 'line',
-      smooth: true,
-      // stack: 'Total',
-      // areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      //     data: [
-      //     // 维度X   维度Y   其他维度 ...
-      //     [  3.4,    4.5  ],
-      // 		[  3.4,    4.5, ],
-      //     [  4.2,    2.3, ],
-      //     [  10.8,   4,   ],
-      // 		[  9.8,   9.5,  ],
-      // 		[  8.8,   9.5,  ],
-      // 		[  8.8,   7.5,  ],
-      // 		[  3.4,    4.5  ]
-      //  ]
-    }
+
   ]
 }) as Ref<ECOption>;
-const { domRef: lineRef } = useEcharts(lineOptions);
+const { domRef: lineRef1 } = useEcharts(lineOptions1);
 
 // 表格数据类型
 type TableData = {
@@ -381,6 +448,7 @@ type TableData = {
 // 图表数据类型
 type FigureData = {
   xyAxis: Array<number>
+	xyAxis1: Array<number>
 }
 
 // 后端接受数据类型
@@ -418,7 +486,7 @@ const simulationParamsInput = ref<SimulationParams>({
 
 const tableColumns = ref<Array<{ title: string; key: string }>>([]);
 const tableData = ref<TableData[]>([]); // 表格数据
-const figureData = ref<FigureData>({ xyAxis: [] }) // 图数据
+const figureData = ref<FigureData>({ xyAxis: [],xyAxis1: []}) // 图数据
 
 // 模式选择数据更新
 function updateModeSelectData(value: number, options: SelectOption) {
@@ -446,6 +514,8 @@ function updateModeSelectData(value: number, options: SelectOption) {
 const updateFigure = () => {
   // dayChoiceSlider.value = dayValue;
   // let dataRange = dayOrWeek.value ? 24 * 7 : 24;
+
+  //图1画面
   lineOptions.value.yAxis = {
     type: 'value',
     name: '温度(T)',
@@ -458,9 +528,9 @@ const updateFigure = () => {
   };
   lineOptions.value.xAxis = {
     type: 'value',
-    name: '熵(S)',
+    name: '距入口段距离',
     axisLabel: {
-      formatter: '{value} J/(mol*k)'
+      formatter: '{value} m'
     }
   };
 
@@ -480,9 +550,45 @@ const updateFigure = () => {
   lineOptions.value.legend = {
     data: []
   }
+  //图2画面
+  lineOptions1.value.yAxis = {
+    type: 'value',
+    name: '温度(T)',
+    axisPointer: {
+      snap: true
+    },
+    axisLabel: {
+      formatter: '{value} K'
+    },
+  };
+  lineOptions1.value.xAxis = {
+    type: 'value',
+    name: '距入口段距离',
+    axisLabel: {
+      formatter: '{value} m'
+    }
+  };
 
+  lineOptions1.value.series = Object.keys(figureData.value.xyAxis1).map((key) => {
+    return {
+      name: key,
+      type: 'line',
+      smooth: true,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: figureData.value.xyAxis1
+    }
+  })
+  lineOptions1.value.legend = {
+    data: []
+  }
+	console.log(figureData.value.xyAxis)
 }
-console.log(figureData.value.xyAxis)
+
+
 
 // const updateSwich = (value: boolean) => {
 //   dayOrWeek.value = value;
@@ -513,7 +619,7 @@ function simulateToServer() {
         const backEndData = response.data as BackEndData;
         tableData.value.push(backEndData.table);
 
-        // console.log(response.data);
+        console.log(response.data);
         // console.log(backEndData.table);
 
         tableColumns.value = Object.keys(backEndData.table).map(key => {
