@@ -403,7 +403,7 @@ type SimulationParams = {
 const simulationParamsInput = ref<SimulationParams>({
   仿真参数: {
     '热流体流量(kg/s)': 4,
-    '热流体入口温度(K)': 300,
+    '热流体入口温度(K)': 600,
 		'冷流体流量(kg/s)': 4,
     '冷流体入口温度(K)': 300,
     '换热管长度(m)':10,
@@ -495,7 +495,7 @@ const message = useMessage();
 // 从后端获取数据
 function simulateToServer() {
   isCalculating.value = true;
-  request.post('/simulation', {
+  request.post('/simulation_1', {
     inputdata: simulationParamsInput.value,
     mode: modeChoosed.value
   })
@@ -536,39 +536,39 @@ function simulateToServer() {
     );
 }
 
-function optimizeToServer() {
-  isCalculating.value = true;
-  let isOptimizationList = Object.values(isOptimizationOptions.value).map((val) => {
-    return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
-  });
-  request.post('/optimization', {
-    "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value }),
-    "mode": modeChoosed.value,
-    "isopt": isOptimizationList
-  }).then((response) => {
-    isCalculating.value = false;
-    if (!isNull(response.error)) {
-      message.error('计算失败');
-      return;
-    }
-    message.success('计算成功');
-    let backEndData = response.data as BackEndData;
-    tableData.value.push(backEndData.table);
-    tableColumns.value = Object.keys(backEndData.table).map((key) => {
-      return {
-        title: key,
-        key: key,
-        width: 80,
-        resizable: true,
-        maxWidth: 200,
-      }
-    });
-    figureData.value = backEndData.figure;
-    // updateFigure(dayChoiceSlider.value);
-  }, (error) => {
-    console.log(error);
-  });
-}
+// function optimizeToServer() {
+//   isCalculating.value = true;
+//   let isOptimizationList = Object.values(isOptimizationOptions.value).map((val) => {
+//     return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
+//   });
+//   request.post('/optimization', {
+//     "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value }),
+//     "mode": modeChoosed.value,
+//     "isopt": isOptimizationList
+//   }).then((response) => {
+//     isCalculating.value = false;
+//     if (!isNull(response.error)) {
+//       message.error('计算失败');
+//       return;
+//     }
+//     message.success('计算成功');
+//     let backEndData = response.data as BackEndData;
+//     tableData.value.push(backEndData.table);
+//     tableColumns.value = Object.keys(backEndData.table).map((key) => {
+//       return {
+//         title: key,
+//         key: key,
+//         width: 80,
+//         resizable: true,
+//         maxWidth: 200,
+//       }
+//     });
+//     figureData.value = backEndData.figure;
+//     // updateFigure(dayChoiceSlider.value);
+//   }, (error) => {
+//     console.log(error);
+//   });
+// }
 
 // 输入框格式化
 const format = (value: number | null) => {

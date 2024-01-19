@@ -58,6 +58,22 @@ end
     ))
 end
 
+@post "/simulation_1" function (req)
+	# 将HTTP请求的正文（request body）转换为 Julia 中的字典（Dict）数据结构
+	paras = json(req)
+	# 调用后端模型获得数据
+	println(paras)
+
+	#figure,table = simulate_1!(paras["inputdata"],Val(paras["mode"]))
+	#println(figure)
+	# 返回数据，匹配前端request要求的格式
+	return Dict(
+		"code" => 200,
+		"message" => "success",
+		"data" => 0
+			)
+end
+
 @get "hello" function (req)
     return Dict(
       "code" => 200,
