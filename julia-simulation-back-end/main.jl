@@ -6,7 +6,7 @@ import JSON
 include("./head.jl")
 include("./components.jl")
 include("./simulation.jl")
-
+include("./Controler.jl")
 
 # 跨域解决方案
 const CORS_HEADERS = [
@@ -32,50 +32,74 @@ end
   # 调用后端模型获得数据
   #table = simulate!(paras["inputdata"], Val(paras["mode"]))
   #println(paras)
-  figure,table = simulate!(paras["inputdata"],Val(paras["mode"]))
+  figure, table = simulate!(paras["inputdata"], Val(paras["mode"]))
   #println(figure)
   # 返回数据，匹配前端request要求的格式
   return Dict(
     "code" => 200,
     "message" => "success",
     "data" => Dict(
-    # "table" => getTableData(table),
+      # "table" => getTableData(table),
       "table" => OrderedDict(k => round(v, digits=2) for (k, v) in table),
       "figure" => Dict(
-      "xyAxis" => figure,
+        "xyAxis" => figure,
       )
     ))
 end
 
 @post "/simulation_1" function (req)
-	paras = json(req)
-	# 调用后端模型获得数据
-	#println(paras)
-	table,figure1,figure2 = simulate_1!(paras["inputdata"],Val(paras["mode"]))
-	#println(figure)
-	# 返回数据，匹配前端request要求的格式
-	return Dict(
+  paras = json(req)
+  # 调用后端模型获得数据
+  #println(paras)
+  table, figure1, figure2 = simulate_1!(paras["inputdata"], Val(paras["mode"]))
+  #println(figure)
+  # 返回数据，匹配前端request要求的格式
+  return Dict(
     "code" => 200,
     "message" => "success",
     "data" => Dict(
-    # "table" => getTableData(table),
-      "table" =>table,
+      # "table" => getTableData(table),
+      "table" => table,
       "figure" => Dict(
-      "xyAxis" => figure1,
-			"xyAxis1" => figure2
+        "xyAxis" => figure1,
+        "xyAxis1" => figure2
       )
     ))
 end
 
-@get "hello" function (req)
-    return Dict(
-      "code" => 200,
-      "message" => "success",
-      "data" => "hello world"
+@post "/simulation_pid" function (req)
+  # 理想PID控制器
+  paras = json(req)
+  # 调用后端模型获得数据
+  println(paras)
+  figure1 = solve_pid_I(paras["inputdata"])
+  figure2 = solve_pid_A(paras["inputdata"])
+
+
+  return Dict(
+    "code" => 200,
+    "message" => "success",
+    "data" => Dict(
+      # "table" => getTableData(table),
+      "figure" => Dict(
+        "xyAxis" => figure1[:r],
+        "xyAxis1" => figure1[:d],
+        "xyAxis2" => figure2[:r],
+        "xyAxis3" => figure2[:d]
+      )
     )
-  end
-  # 本地测试 async=true，服务器上 async=false。同步测试便于调试
-  serve(host="0.0.0.0", port=8080, async=true)
-  # serve(port=8080, async=true)
+  )
+end
+
+@get "hello" function (req)
+  return Dict(
+    "code" => 200,
+    "message" => "success",
+    "data" => "hello world"
+  )
+end
+# 本地测试 async=true，服务器上 async=false。同步测试便于调试
+serve(host="0.0.0.0", port=8081, async=true)
+# serve(port=8080, async=true)
 
 

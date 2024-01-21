@@ -24,23 +24,36 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
           icon: 'icon-park-outline:workbench',
         }
       },
-      // {
-      //   name: 'dashboard_scenario',
-      //   path: '/dashboard/scenario',
-      //   component: 'self',
-      //   meta: {
-      //     title: '风光煤气氢储',
-      //     requiresAuth: true,
-      //     icon: 'icon-park-outline:editor',
-      //   }
-      // }
     ],
     meta: {
       title: '仿真',
       icon: 'mdi:monitor-dashboard',
       order: 1
     }
-  },],
+  },
+	{
+    name: 'controler',
+    path: '/controler',
+    component: 'basic',
+    children: [
+
+      {
+        name: 'controler_scenario',
+        path: '/controler/scenario',
+        component: 'self',
+        meta: {
+          title: 'PID控制实验',
+          requiresAuth: true,
+          icon: 'icon-park-outline:editor',
+        }
+      }
+    ],
+    meta: {
+      title: '控制',
+      icon: 'mdi:monitor-dashboard',
+      order: 2
+    }
+  }],
   admin: [],
   user: []
 };
