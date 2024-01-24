@@ -10,7 +10,7 @@ WORKDIR /home/app
 RUN julia -e "ENV[\"JULIA_NUM_PRECOMPILE_TASKS\"]=1;ENV[\"JULIA_PKG_SERVER\"]=\"https://mirrors.pku.edu.cn/julia/\";using Pkg; Pkg.activate(\".\"); Pkg.instantiate(); Pkg.precompile(); "
 
 # ports
-EXPOSE 8888
+EXPOSE 8080
 
 # run app
 CMD julia -e "using Pkg; Pkg.activate(\".\");Pkg.instantiate();include(\"main.jl\");"

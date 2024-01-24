@@ -1,12 +1,16 @@
+module backend
+
 using Oxygen, HTTP
 import JSON
 
 #using DataFrames
 
-include("./head.jl")
-include("./components.jl")
-include("./simulation.jl")
-include("./Controler.jl")
+include("head.jl")
+include("Controler/Polynomial.jl")
+include("Simulation/HeatExchanger.jl")
+include("Simulation/Thermodynamics.jl")
+include("Simulation/VenturiMeter.jl")
+include("function.jl")
 
 # 跨域解决方案
 const CORS_HEADERS = [
@@ -14,6 +18,8 @@ const CORS_HEADERS = [
   "Access-Control-Allow-Headers" => "*",
   "Access-Control-Allow-Methods" => "POST, GET, OPTIONS"
 ]
+function julia_main()
+
 function CorsMiddleware(handler)
   return function (req::HTTP.Request)
     # println("CORS middleware")
@@ -67,6 +73,21 @@ end
     ))
 end
 
+@post "/simulation_2" function (req)
+  paras = json(req)
+  # 调用后端模型获得数据
+  figure = simulate_2!(paras["inputdata"],Val(paras["mode"]))
+  # 返回数据，匹配前端request要求的格式
+  return Dict(
+    "code" => 200,
+    "message" => "success",
+    "data" => Dict(
+    "figure" => Dict(
+      "xyAxis" => figure
+      )
+    ))
+end
+
 @post "/simulation_pid" function (req)
   # 理想PID控制器
   paras = json(req)
@@ -91,7 +112,7 @@ end
   )
 end
 
-@get "hello" function (req)
+@get "/hello" function (req)
   return Dict(
     "code" => 200,
     "message" => "success",
@@ -99,7 +120,9 @@ end
   )
 end
 # 本地测试 async=true，服务器上 async=false。同步测试便于调试
-serve(host="0.0.0.0", port=8081, async=true)
+serve(host="0.0.0.0", port=8080, async=true,middleware=[CorsMiddleware])
 # serve(port=8080, async=true)
+return 0
+end
 
-
+end # module backend

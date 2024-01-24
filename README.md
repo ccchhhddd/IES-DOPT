@@ -1,10 +1,12 @@
-# IES-DOPT 综合能源系统仿真优化平台开发项目
+# IES-DOPT 综合能源系统优化控制仿真平台开发项目
 
 ## 本项目所使用使用前端框架
 
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 - [Soybean Admin](https://github.com/honghuangdc/soybean-admin) 是一个基于 Vue3、Vite3、TypeScript、NaiveUI、Pinia 和 UnoCSS 的清新优雅的中后台模版，它使用了最新流行的前端技术栈，内置丰富的主题配置，有着极高的代码规范，基于文件的路由系统以及基于 Mock 的动态权限路由，开箱即用的中后台前端解决方案，也可用于学习参考。
+
+
 
 ## 部署服务器
 
@@ -35,16 +37,42 @@ docker pull chenghd/front_end
 docker run --name front -p 80:80 -d chenghd/front_end
 ```
 
-### 后端部署(探索中)
-```
-using PackageCompiler
-```
-```
-create_app("julia-simulation-back-end", "backendCompiled", force=true, incremental=true)
-```
+### 后端部署
+1.在本地打包镜像
+
 ```
 docker build -t backend .
 ```
+
+2.将后端的本地镜像压缩成linux系统可识别的压缩包  .tar
+
+```
+docker save  [image] -o image.tar
+```
+
+3.将镜像压缩包tar上传至服务器（这里可以使用 mobaxterm终端工具）
+
+https://mobaxterm.mobatek.net/
+
+4.在服务器端对压缩包进行解压
+
+```
+docker load -i image.tar
+```
+
+5.查看镜像
+
+```
+docker images
+```
+
+6.运行后端镜像
+
+```
+docker run --name [容器名] -p 8080:80 -d [镜像名]
+```
+
+
 
 ## 使用说明(本地开发者模式)
 
@@ -83,13 +111,30 @@ npm run dev ——————运行程序
 
 ### 后端
 
-初次运行时间会略长，请耐心等待
+运行时建议单独进入backend环境运行进入包管理模式运行如下代码进行环境激活
 
 ```
-直接运行main.jl文件即可 文件路径：  /julia-simulation-back-end/main.jl
+activate.
 ```
 
-初次进行仿真运算时间会略长，请耐心等待
+运行后端（文件路径:   backend\main.jl）
 
+```
+include('main.jl')
+```
+
+若出现缺包现象，进入julia包管理模式运行如下代码进行自动补全
+
+```
+instantiate
+```
+
+或可以手动添加所缺的包
+
+```
+Pkg.add()
+```
+
+初次进行运算时间会略长，请耐心等待
 
 
