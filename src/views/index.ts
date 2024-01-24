@@ -21,6 +21,7 @@ export const views: Record<
   controler_workbench: () => import('./controler/workbench/index.vue'),
   dashboard_analysis: () => import('./dashboard/analysis/index.vue'),
   dashboard_scenario: () => import('./dashboard/scenario/index.vue'),
+  dashboard_venturi: () => import('./dashboard/venturi/index.vue'),
   dashboard_workbench: () => import('./dashboard/workbench/index.vue'),
   document_naive: () => import('./document/naive/index.vue'),
   'document_project-link': () => import('./document/project-link/index.vue'),

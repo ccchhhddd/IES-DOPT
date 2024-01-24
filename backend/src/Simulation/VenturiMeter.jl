@@ -1,8 +1,9 @@
 simulate_2!(paras,::Val{1}) = simulation_Venturi_Meter(Q = paras["仿真参数"]["流量(m^3/s)"], friction = true, Media = paras["仿真参数"]["流体种类"])
 
-simulate_1!(paras,::Val{2}) = simulation_Venturi_Meter(Q = paras["仿真参数"]["流量(m^3/s)"], friction = false, Media = paras["仿真参数"]["流体种类"])                     
+simulate_2!(paras,::Val{2}) = simulation_Venturi_Meter(Q = paras["仿真参数"]["流量(m^3/s)"], friction = false, Media = paras["仿真参数"]["流体种类"])
 
-function simulation_Venturi_Meter(; Q::Number = 0.1 ,  friction::Bool = false, Media::String = "Water")
+function simulation_Venturi_Meter(; Q,  friction::Bool = false, Media::String = "Water")
+  Q = Q isa Number ? Q : parse(Float64, Q)
   #参数
   d = 0.1 #喉管直径
   D = 0.2 #直径
@@ -27,7 +28,7 @@ function simulation_Venturi_Meter(; Q::Number = 0.1 ,  friction::Bool = false, M
       return 0
     end
   end
- 
+
   p = [d, D, P0, ρ, g]
 
   function h_column(x,p)
@@ -40,7 +41,7 @@ function simulation_Venturi_Meter(; Q::Number = 0.1 ,  friction::Bool = false, M
       d_x = p[1]
     elseif 0.6<= x< 0.8
       d_x = p[1]+(p[2]-p[1])/0.2*(x-0.6)
-    elseif 0.8<= x< 1.0
+    elseif 0.8<= x<= 1.0
       d_x = p[2]
     end
     V = Q/(π*d_x^2/4)
@@ -60,6 +61,6 @@ function simulation_Venturi_Meter(; Q::Number = 0.1 ,  friction::Bool = false, M
   figure = transposeMatrix(x_values, y_values)
 
   return figure
-end 
+end
 
 

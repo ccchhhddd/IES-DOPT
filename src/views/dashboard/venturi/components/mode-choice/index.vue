@@ -1,11 +1,11 @@
 <template>
-  <n-divider title-placement="center">{{ props.title + props.description }}热力循环仿真</n-divider>
+  <n-divider title-placement="center">{{ props.title + props.description }}文丘里管压力分布仿真</n-divider>
 
   <!-- 第一行 模式选择与经纬度-->
   <n-grid :x-gap="16" :y-gap="16" :item-responsive="true" class="pb-15px">
     <n-grid-item span="0:24 640:24 1024:12">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <p class="text-16px font-bold inline-block">模式选择</p>
+        <p class="text-16px font-bold inline-block">是否有摩擦</p>
         <p class="text-16px text-red inline-block">*</p>
         <!-- 在文字后面显示下拉框 -->
         <n-select
@@ -24,10 +24,10 @@
         <p class="text-16px text-red inline-block">*</p>
         <n-space justify="space-between">
           <n-input-number v-model:value="longitude" class="py-4px" placeholder="0.0">
-            <template #prefix>经度</template>
+            <template #prefix>经度:</template>
           </n-input-number>
           <n-input-number v-model:value="latitude" class="py-4px" placeholder="0.0">
-            <template #prefix>纬度：</template>
+            <template #prefix>纬度:</template>
           </n-input-number>
         </n-space>
       </n-card>
@@ -40,17 +40,14 @@
     <n-grid-item span="0:24 640:24 1024:12">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <n-space justify="center">
-          <p class="text-28px font-bold pb-12px">系统图</p>
+          <p class="text-28px font-bold pb-12px">示意图</p>
         </n-space>
-        <n-space v-if="modeChoosed == 1" justify="center">
-          <n-image src="/朗肯循环.png" alt="mode-choice" width="600" />
+        <n-space justify="center">
+          <n-image src="/venturi.png" alt="mode-choice" width="600" />
         </n-space>
-        <n-space v-if="modeChoosed == 2" justify="center">
-          <n-image src="/再热循环.png" alt="mode-choice" width="600" />
-        </n-space>
-        <n-space v-if="modeChoosed == 3" justify="center">
+        <!-- <n-space v-if='modeChoosed == 3' justify='center'>
           <n-image src="/制冷循环.png" alt="mode-choice" width="600" />
-        </n-space>
+        </n-space> -->
       </n-card>
     </n-grid-item>
     <!-- 参数输入 -->
@@ -65,28 +62,24 @@
                   v-for="(val, key, ind) in simulationParamsInput"
                   :title="key"
                   :name="ind"
-                  :disabled="
-                    (modeChoosed == 1 && ind != 0) || (modeChoosed == 2 && ind != 1) || (modeChoosed == 3 && ind != 2)
-                  "
+                  :disabled="modeChoosed == 0"
                 >
                   <!-- ind代表第几个不显示，用于在模式切换时进行选择 -->
                   <n-space vertical justify="space-between" size="large" style="margin-bottom: 10px">
                     <n-input
-                      v-for="(val_input, key_input, _) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='工质')) as { [key: string]: number })"
+                      v-for="(val_input, key_input, _) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='流体种类')) as { [key: string]: number })"
                       v-model:value="val[key_input as keyof typeof val]"
-                      :disabled="modeChoosed > 3 || modeChoosed !== ind + 1"
                       :placeholder="val_input.toString()"
                       :parse="parse"
                       :format="format"
                     >
                       <template #prefix>{{ key_input }}：</template>
                     </n-input>
-                    <p>工质：</p>
+                    <p>流体种类：</p>
                     <n-select
-                      v-model:value="val['工质']"
+                      v-model:value="val['流体种类']"
                       :options="wfOptions"
-                      :disabled="modeChoosed > 3 || modeChoosed !== ind + 1"
-                      @update:value="(value: string, options: SelectOption)=>val['工质']=value"
+                      @update:value="(value: string, options: SelectOption)=>val['流体种类']=value"
                     />
                   </n-space>
                 </n-collapse-item>
@@ -99,34 +92,35 @@
             </n-spin>
           </n-tab-pane>
 
+          //
           <!-- <n-tab-pane name='优化计算参数输入'>
-            <n-spin size="large" :show="isCalculating">
-              <template #description>
-                正在计算中，请稍等......
-              </template>
-              <n-gradient-text :size="16">选择待优化容量参数:</n-gradient-text>
-              <n-select multiple placeholder="选择容量优化参数" v-model:options="isOptimizationOptions"
-                v-model:value="isOptimizationGroup" style='margin-bottom: 15px;margin-top: 5px;' />
-              <n-collapse :accordion="true">
-                <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
-                  :disabled='(modeChoosed < 3) && (ind == 4)'>
-                  <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
-                    <n-input v-for="(val_input, key_input,) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='工质')) as { [key: string]: number })"
-										v-model:value='val[key_input as keyof typeof val]' :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"
-                       :placeholder='val_input.toString()'
-                      :parse="parse" :format="format">
-                      <template #prefix>{{ key_input }}： </template>
-                    </n-input>
-										<p>工质：</p>
-                    <n-select v-model:value="val['工质']" :options="wfOptions" @update:value="(value: string, options: SelectOption)=>val['工质']=value" :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"/>
-                  </n-space>
-                </n-collapse-item>
-                <n-divider></n-divider>
-              </n-collapse>
-              <n-button size='large' type='info' strong round style='width: 100%;'
-                :on-click="optimizeToServer">点击进行优化计算</n-button>
-            </n-spin>
-          </n-tab-pane> -->
+          //   <n-spin size="large" :show="isCalculating">
+          //     <template #description>
+          //       正在计算中，请稍等......
+          //     </template>
+          //     <n-gradient-text :size="16">选择待优化容量参数:</n-gradient-text>
+          //     <n-select multiple placeholder="选择容量优化参数" v-model:options="isOptimizationOptions"
+          //       v-model:value="isOptimizationGroup" style='margin-bottom: 15px;margin-top: 5px;' />
+          //     <n-collapse :accordion="true">
+          //       <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
+          //         :disabled='(modeChoosed < 3) && (ind == 4)'>
+          //         <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+          //           <n-input v-for="(val_input, key_input,) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='工质')) as { [key: string]: number })"
+					// 					v-model:value='val[key_input as keyof typeof val]' :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"
+          //              :placeholder='val_input.toString()'
+          //             :parse="parse" :format="format">
+          //             <template #prefix>{{ key_input }}： </template>
+          //           </n-input>
+					// 					<p>工质：</p>
+          //           <n-select v-model:value="val['工质']" :options="wfOptions" @update:value="(value: string, options: SelectOption)=>val['工质']=value" :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"/>
+          //         </n-space>
+          //       </n-collapse-item>
+          //       <n-divider></n-divider>
+          //     </n-collapse>
+          //     <n-button size='large' type='info' strong round style='width: 100%;'
+          //       :on-click="optimizeToServer">点击进行优化计算</n-button>
+          //   </n-spin>
+          // </n-tab-pane> -->
         </n-tabs>
       </n-card>
     </n-grid-item>
@@ -137,7 +131,7 @@
   <n-space vertical>
     <n-card :bordered="false" class="rounded-16px shadow-sm">
       <n-space justify="center">
-        <p class="text-24px font-bold pb-12px">T-S图</p>
+        <p class="text-24px font-bold pb-12px">文丘里管压力分布图</p>
         <!-- <n-switch v-model:value="dayOrWeek" size="large" class='pt-15px' @update:value="updateSwich">
           <template #checked> 周数据图 </template>
           <template #unchecked> 日数据图 </template>
@@ -148,25 +142,16 @@
       <n-slider v-else v-model:value="dayChoiceSlider" :step="1" :max="52" :min="1" :on-update:value="updateFigure" /> -->
       <div ref="lineRef" class="w-full h-640px" style="margin-top: 15px"></div>
     </n-card>
-
-    <n-card :bordered="false" class="rounded-16px shadow-sm">
-      <n-space justify="center">
-        <p class="text-24px font-bold pb-12px">仿真结果参数输出表</p>
-        <n-button type="success" round :on-click="excelExport" style="margin-top: 3px">
-          {{ tableData.length }}条数据，导出Excel表格
-        </n-button>
-      </n-space>
-      <n-data-table :columns="tableColumns" :data="tableData" :pagination="{ pageSize: 10 }" :single-line="false" />
-    </n-card>
   </n-space>
 </template>
 
 <script setup lang="ts">
 import type { Ref } from 'vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import type { SelectOption } from 'naive-ui';
 import { useMessage } from 'naive-ui';
 import * as XLSX from 'xlsx';
+import { useMounted } from '@vueuse/core';
 import { type ECOption, useEcharts } from '@/composables';
 // import { result, toUpper } from 'lodash-es';
 // import { number } from 'echarts';
@@ -199,16 +184,12 @@ const isCalculating = ref<boolean>(false);
 // 模式选择选项
 const modeOptions = [
   {
-    label: '朗肯循环仿真',
+    label: '是',
     value: 1
   },
   {
-    label: '再热循环仿真',
+    label: '否',
     value: 2
-  },
-  {
-    label: '制冷循环仿真',
-    value: 3
   }
 ];
 
@@ -219,8 +200,8 @@ const wfOptions = [
     value: 'Water'
   },
   {
-    label: 'R134a',
-    value: 'R134a'
+    label: 'Air',
+    value: 'Air'
   }
 ];
 
@@ -285,25 +266,25 @@ const lineOptions = ref<ECOption>({
   },
   xAxis: {
     type: 'value',
-    name: '熵(S)',
+    name: '位置(m)',
     axisLabel: {
-      formatter: '{value} J/(mol*k)'
+      formatter: '{value} m'
     }
   },
   yAxis: {
     type: 'value',
-    name: '温度(T)',
+    name: '压力(mH2O)',
     axisPointer: {
       snap: true
     },
     // axisLine: { onZero: false },
     axisLabel: {
-      formatter: '{value} K'
+      formatter: '{value} mH2O'
     }
   },
   series: [
     {
-      name: '朗肯循环',
+      name: '换热器',
       type: 'line',
       smooth: true,
       // stack: 'Total',
@@ -323,49 +304,6 @@ const lineOptions = ref<ECOption>({
       // 		[  8.8,   4.5,  ],
       // 		[  5.4,    4.5  ]
       // ]
-    },
-    {
-      name: '再热循环',
-      type: 'line',
-      smooth: true,
-      // stack: 'Total',
-      // areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      }
-
-      //     data: [
-      //     // 维度X   维度Y   其他维度 ...
-      //     [  3.4,    4.5  ],
-      // 		[  3.4,    4.5, ],
-      //     [  4.2,    2.3, ],
-      //     [  10.8,   4,   ],
-      // 		[  9.8,   9.5,  ],
-      // 		[  8.8,   9.5,  ],
-      // 		[  8.8,   7.5,  ],
-      // 		[  3.4,    4.5  ]
-      //  ]
-    },
-    {
-      name: '制冷循环',
-      type: 'line',
-      smooth: true,
-      // stack: 'Total',
-      // areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      }
-      //     data: [
-      //     // 维度X   维度Y   其他维度 ...
-      //     [  3.4,    4.5  ],
-      // 		[  3.4,    4.5, ],
-      //     [  4.2,    2.3, ],
-      //     [  10.8,   4,   ],
-      // 		[  9.8,   9.5,  ],
-      // 		[  8.8,   9.5,  ],
-      // 		[  8.8,   7.5,  ],
-      // 		[  3.4,    4.5  ]
-      //  ]
     }
   ]
 }) as Ref<ECOption>;
@@ -379,6 +317,7 @@ type TableData = {
 // 图表数据类型
 type FigureData = {
   xyAxis: Array<number>;
+  xyAxis1: Array<number>;
 };
 
 // 后端接受数据类型
@@ -389,66 +328,26 @@ type BackEndData = {
 
 // 仿真参数数据类型
 type SimulationParams = {
-  朗肯循环参数: {
-    '冷凝器冷却压力(pa)': number;
-    '水泵供给压力(pa)': number;
-    '锅炉出口温度(k)': number;
-    工质: string;
-  };
-  再热循环参数: {
-    '冷凝器冷却压力(pa)': number;
-    '水泵供给压力(pa)': number;
-    '锅炉出口温度(k)': number;
-    '再热器出口温度(k)': number;
-    '汽轮机一级出口压力(pa)': number;
-    工质: string;
-  };
-  制冷循环参数: {
-    '压缩机出口压力(pa)': number;
-    '节气门出口压力(pa)': number;
-    工质: string;
+  仿真参数: {
+    '流量(m^3/s)': number;
+    流体种类: string;
   };
 };
 
 const simulationParamsInput = ref<SimulationParams>({
-  朗肯循环参数: {
-    '冷凝器冷却压力(pa)': 4000,
-    '水泵供给压力(pa)': 3000000,
-    '锅炉出口温度(k)': 823,
-    工质: 'Water'
-  },
-  再热循环参数: {
-    '冷凝器冷却压力(pa)': 4000,
-    '水泵供给压力(pa)': 18000000,
-    '锅炉出口温度(k)': 823,
-    '再热器出口温度(k)': 720,
-    '汽轮机一级出口压力(pa)': 3000000,
-    工质: 'Water'
-  },
-  制冷循环参数: {
-    '压缩机出口压力(pa)': 1020000,
-    '节气门出口压力(pa)': 84000,
-    工质: 'Water'
+  仿真参数: {
+    '流量(m^3/s)': 0.1,
+    流体种类: 'Water'
   }
 });
-
-const isOptimizationGroup = ref<Array<number>>([2]);
-const optimizationTime = ref<number>(1);
-const isOptimizationOptions = ref([
-  {
-    label: '光伏容量',
-    value: 0
-  }
-]);
 
 // 监测isOptimizationGroup的值是否改变
 // watch(isOptimizationGroup, (val) => {
 //   console.log(val)
 // })
 
-const tableColumns = ref<Array<{ title: string; key: string }>>([]);
 const tableData = ref<TableData[]>([]); // 表格数据
-const figureData = ref<FigureData>({ xyAxis: [] }); // 图数据
+const figureData = ref<FigureData>({ xyAxis: [], xyAxis1: [] }); // 图数据
 
 // 模式选择数据更新
 function updateModeSelectData(value: number, options: SelectOption) {
@@ -475,51 +374,41 @@ function updateModeSelectData(value: number, options: SelectOption) {
 const updateFigure = () => {
   // dayChoiceSlider.value = dayValue;
   // let dataRange = dayOrWeek.value ? 24 * 7 : 24;
+
+  // 图1画面
   lineOptions.value.yAxis = {
     type: 'value',
-    name: '温度(T)',
+    name: '压力(mH2O)',
     axisPointer: {
       snap: true
     },
     axisLabel: {
-      formatter: '{value} K'
+      formatter: '{value} mH2O'
     }
   };
   lineOptions.value.xAxis = {
     type: 'value',
-    name: '熵(S)',
+    name: '位置(m)',
     axisLabel: {
-      formatter: '{value} J/(mol*k)'
+      formatter: '{value} m'
     }
   };
-  let label;
-  switch (modeChoosed.value) {
-    case 1:
-      label = '朗肯循环';
-      break;
-    case 2:
-      label = '再热循环';
-      break;
-    case 3:
-      label = '制冷循环';
-      break;
-  }
 
   lineOptions.value.series = {
-    name: label,
+    name: '文丘里管',
     type: 'line',
     smooth: true,
+    // stack: 'Total',
+    // areaStyle: {},
     emphasis: {
       focus: 'series'
     },
     data: figureData.value.xyAxis
   };
   lineOptions.value.legend = {
-    orient: 'horizontal',
-    right: 'center'
+    data: []
   };
 };
-console.log(figureData.value.xyAxis);
 
 // const updateSwich = (value: boolean) => {
 //   dayOrWeek.value = value;
@@ -532,7 +421,7 @@ const message = useMessage();
 function simulateToServer() {
   isCalculating.value = true;
   request
-    .post('/simulation', {
+    .post('/simulation_2', {
       inputdata: simulationParamsInput.value,
       mode: modeChoosed.value
     })
@@ -548,20 +437,9 @@ function simulateToServer() {
         message.success('计算成功');
 
         const backEndData = response.data as BackEndData;
-        tableData.value.push(backEndData.table);
 
-        // console.log(response.data);
+        console.log(response.data);
         // console.log(backEndData.table);
-
-        tableColumns.value = Object.keys(backEndData.table).map(key => {
-          return {
-            title: key,
-            key,
-            width: 80,
-            resizable: true,
-            maxWidth: 200
-          };
-        });
         // console.log(tableColumns.value);
         figureData.value = backEndData.figure;
         // console.log(figureData)
@@ -573,44 +451,39 @@ function simulateToServer() {
     );
 }
 
-function optimizeToServer() {
-  isCalculating.value = true;
-  const isOptimizationList = Object.values(isOptimizationOptions.value).map(val => {
-    return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
-  });
-  request
-    .post('/optimization', {
-      inputdata: { ...simulationParamsInput.value, 优化时长: optimizationTime.value },
-      mode: modeChoosed.value,
-      isopt: isOptimizationList
-    })
-    .then(
-      response => {
-        isCalculating.value = false;
-        if (!isNull(response.error)) {
-          message.error('计算失败');
-          return;
-        }
-        message.success('计算成功');
-        const backEndData = response.data as BackEndData;
-        tableData.value.push(backEndData.table);
-        tableColumns.value = Object.keys(backEndData.table).map(key => {
-          return {
-            title: key,
-            key,
-            width: 80,
-            resizable: true,
-            maxWidth: 200
-          };
-        });
-        figureData.value = backEndData.figure;
-        // updateFigure(dayChoiceSlider.value);
-      },
-      error => {
-        console.log(error);
-      }
-    );
-}
+// function optimizeToServer() {
+//   isCalculating.value = true;
+//   let isOptimizationList = Object.values(isOptimizationOptions.value).map((val) => {
+//     return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
+//   });
+//   request.post('/optimization', {
+//     "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value }),
+//     "mode": modeChoosed.value,
+//     "isopt": isOptimizationList
+//   }).then((response) => {
+//     isCalculating.value = false;
+//     if (!isNull(response.error)) {
+//       message.error('计算失败');
+//       return;
+//     }
+//     message.success('计算成功');
+//     let backEndData = response.data as BackEndData;
+//     tableData.value.push(backEndData.table);
+//     tableColumns.value = Object.keys(backEndData.table).map((key) => {
+//       return {
+//         title: key,
+//         key: key,
+//         width: 80,
+//         resizable: true,
+//         maxWidth: 200,
+//       }
+//     });
+//     figureData.value = backEndData.figure;
+//     // updateFigure(dayChoiceSlider.value);
+//   }, (error) => {
+//     console.log(error);
+//   });
+// }
 
 // 输入框格式化
 const format = (value: number | null) => {
@@ -622,34 +495,6 @@ const parse = (input: string) => {
   if (/^\d+(\.(\d+)?)?$/.test(nums)) return Number(nums);
   return nums === '' ? null : Number.NaN;
 };
-
-// 导出excel
-function excelExport() {
-  //  const worksheet = XLSX.utils.aoa_to_sheet(excleData);
-  const worksheet = XLSX.utils.json_to_sheet(tableData.value);
-
-  //  设置每列的列宽，10代表10个字符，注意中文占2个字符
-  worksheet['!cols'] = Object.keys(tableData.value[0]).map(() => {
-    return {
-      wpx: 100,
-      alignment: {
-        wrapText: true
-      }
-    };
-  });
-
-  //  新建一个工作簿,创建虚拟workbook
-  const workbook = XLSX.utils.book_new();
-
-  /* 将工作表添加到工作簿,生成xlsx文件(book,sheet数据,sheet命名) */
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-
-  /* 输出工作表， 由文件名决定的输出格式(book,xlsx文件名称) */
-  const name = `${Date().split(' ').slice(3, 5).join('_')}_结果输出表.xlsx`;
-  XLSX.writeFile(workbook, name);
-
-  return 0;
-}
 </script>
 
 <style scoped></style>

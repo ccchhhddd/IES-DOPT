@@ -24,6 +24,16 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
           icon: 'icon-park-outline:workbench',
         }
       },
+			{
+        name: 'dashboard_venturi',
+        path: '/dashboard/venturi',
+        component: 'self',
+        meta: {
+          title: '文丘里管压力仿真',
+          requiresAuth: true,
+          icon: 'icon-park-outline:workbench',
+        }
+      },
     ],
     meta: {
       title: '仿真',

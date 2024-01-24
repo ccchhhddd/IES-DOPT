@@ -7,6 +7,7 @@ import JSON
 
 include("head.jl")
 include("Controler/Polynomial.jl")
+include("Controler/Controler.jl")
 include("Simulation/HeatExchanger.jl")
 include("Simulation/Thermodynamics.jl")
 include("Simulation/VenturiMeter.jl")
