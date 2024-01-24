@@ -1,4 +1,3 @@
-using ModelingToolkit
 @info "定义接口..."
 @connector function StreamNode(; name)
     sts = @variables begin
