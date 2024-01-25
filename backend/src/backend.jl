@@ -1,5 +1,3 @@
-module backend
-
 using Oxygen, HTTP
 import JSON
 
@@ -19,7 +17,6 @@ const CORS_HEADERS = [
   "Access-Control-Allow-Headers" => "*",
   "Access-Control-Allow-Methods" => "POST, GET, OPTIONS"
 ]
-function julia_main()
 
 function CorsMiddleware(handler)
   return function (req::HTTP.Request)
@@ -123,7 +120,4 @@ end
 # 本地测试 async=true，服务器上 async=false。同步测试便于调试
 serve(host="0.0.0.0", port=8080, async=true,middleware=[CorsMiddleware])
 # serve(port=8080, async=true)
-return 0
-end
 
-end # module backend
