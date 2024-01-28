@@ -43,7 +43,7 @@
           <p class="text-28px font-bold pb-12px">示意图</p>
         </n-space>
         <n-space justify="center">
-          <n-image src="/venturi.png" alt="mode-choice" width="600" />
+          <n-image src="/venturi.jpg" alt="mode-choice" width="600" />
         </n-space>
         <!-- <n-space v-if='modeChoosed == 3' justify='center'>
           <n-image src="/制冷循环.png" alt="mode-choice" width="600" />
