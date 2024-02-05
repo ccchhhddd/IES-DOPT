@@ -8,25 +8,20 @@
         <p class="text-16px font-bold inline-block">流态选择</p>
         <p class="text-16px text-red inline-block">*</p>
         <!-- 在文字后面显示下拉框 -->
-        <n-select
-          v-model:value="modeChoosed"
-          :options="modeOptions"
-          style=""
-          class="py-5px"
-          @update:value="updateModeSelectData"
-        />
+        <n-select v-model:value="modeChoosed" :options="modeOptions" style="" class="py-5px"
+          @update:value="updateModeSelectData" />
       </n-card>
     </n-grid-item>
 
-    <n-grid-item span="0:24 640:24 1024:12">
-      <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <p class="text-16px font-bold inline-block">地点经纬度(待开发)</p>
-        <p class="text-16px text-red inline-block">*</p>
-        <n-space justify="space-between">
-          <n-input-number v-model:value="longitude" class="py-4px" placeholder="0.0">
+    <n-grid-item span='0:24 640:24 1024:12'>
+      <n-card :bordered='false' class='rounded-16px shadow-sm'>
+        <p class='text-16px font-bold inline-block '>地点经纬度(待开发)</p>
+        <p class='text-16px text-red inline-block'> *</p>
+        <n-space justify='space-between'>
+          <n-input-number v-model:value='longitude' class='py-4px ' placeholder='0.0'>
             <template #prefix>经度:</template>
           </n-input-number>
-          <n-input-number v-model:value="latitude" class="py-4px" placeholder="0.0">
+          <n-input-number v-model:value='latitude' class='py-4px' placeholder='0.0'>
             <template #prefix>纬度:</template>
           </n-input-number>
         </n-space>
@@ -45,7 +40,7 @@
         <n-space v-if="modeChoosed == 1" justify="center">
           <n-image src="/顺流.jpg" alt="mode-choice" width="600" />
         </n-space>
-        <n-space v-if="modeChoosed == 2" justify="center">
+        <n-space v-if='modeChoosed == 2' justify='center'>
           <n-image src="/逆流.jpg" alt="mode-choice" width="600" />
         </n-space>
         <!-- <n-space v-if='modeChoosed == 3' justify='center'>
@@ -61,45 +56,59 @@
             <n-spin size="large" :show="isCalculating">
               <template #description>正在计算中，请稍等...</template>
               <n-collapse :accordion="true">
-                <n-collapse-item
-                  v-for="(val, key, ind) in simulationParamsInput"
-                  :title="key"
-                  :name="ind"
-                  :disabled="modeChoosed == 0"
-                >
+                <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
+                  :disabled='((modeChoosed == 0))'>
                   <!-- ind代表第几个不显示，用于在模式切换时进行选择 -->
-                  <n-space vertical justify="space-between" size="large" style="margin-bottom: 10px">
-                    <n-input
-                      v-for="(val_input, key_input, _) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='流体种类')) as { [key: string]: number })"
-                      v-model:value="val[key_input as keyof typeof val]"
-                      :placeholder="val_input.toString()"
-                      :parse="parse"
-                      :format="format"
-                    >
-                      <template #prefix>{{ key_input }}：</template>
+                  <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+                    <n-input v-for="(val_input, key_input, _) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='流体种类')) as { [key: string]: number })"
+                      v-model:value='val[key_input as keyof typeof val]'
+                      :placeholder='val_input.toString()' :parse="parse" :format="format">
+                      <template #prefix>{{ key_input }}： </template>
                     </n-input>
                     <p>热流体种类：</p>
-                    <n-select
-                      v-model:value="val['热流体种类']"
-                      :options="wfOptions_H"
-                      @update:value="(value: string, options: SelectOption)=>val['热流体种类']=value"
-                    />
-                    <p>冷流体种类：</p>
-                    <n-select
-                      v-model:value="val['冷流体种类']"
-                      :options="wfOptions_C"
-                      @update:value="(value: string, options: SelectOption)=>val['冷流体种类']=value"
-                    />
-                  </n-space>
+                    <n-select v-model:value="val['热流体种类']" :options="wfOptions_H" @update:value="(value: string, options: SelectOption)=>val['热流体种类']=value"/>
+										<p>冷流体种类：</p>
+										<n-select v-model:value="val['冷流体种类']" :options="wfOptions_C" @update:value="(value: string, options: SelectOption)=>val['冷流体种类']=value"/>
+											</n-space>
                 </n-collapse-item>
                 <n-divider></n-divider>
               </n-collapse>
               <n-button size="large" type="info" strong round style="width: 100%" :on-click="simulateToServer">
                 点击进行仿真计算
               </n-button>
-              <n-grid :x-gap="16" :y-gap="16" :item-responsive="true"></n-grid>
+              <n-grid :x-gap="16" :y-gap="16" :item-responsive="true">
+              </n-grid>
             </n-spin>
           </n-tab-pane>
+
+          // <!-- <n-tab-pane name='优化计算参数输入'>
+          //   <n-spin size="large" :show="isCalculating">
+          //     <template #description>
+          //       正在计算中，请稍等......
+          //     </template>
+          //     <n-gradient-text :size="16">选择待优化容量参数:</n-gradient-text>
+          //     <n-select multiple placeholder="选择容量优化参数" v-model:options="isOptimizationOptions"
+          //       v-model:value="isOptimizationGroup" style='margin-bottom: 15px;margin-top: 5px;' />
+          //     <n-collapse :accordion="true">
+          //       <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
+          //         :disabled='(modeChoosed < 3) && (ind == 4)'>
+          //         <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+          //           <n-input v-for="(val_input, key_input,) in (Object.fromEntries(Object.entries(val).filter(([key,_])=>key!=='工质')) as { [key: string]: number })"
+					// 					v-model:value='val[key_input as keyof typeof val]' :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"
+          //              :placeholder='val_input.toString()'
+          //             :parse="parse" :format="format">
+          //             <template #prefix>{{ key_input }}： </template>
+          //           </n-input>
+					// 					<p>工质：</p>
+          //           <n-select v-model:value="val['工质']" :options="wfOptions" @update:value="(value: string, options: SelectOption)=>val['工质']=value" :disabled="(modeChoosed > 3)||(modeChoosed!==ind+1)"/>
+          //         </n-space>
+          //       </n-collapse-item>
+          //       <n-divider></n-divider>
+          //     </n-collapse>
+          //     <n-button size='large' type='info' strong round style='width: 100%;'
+          //       :on-click="optimizeToServer">点击进行优化计算</n-button>
+          //   </n-spin>
+          // </n-tab-pane> -->
         </n-tabs>
       </n-card>
     </n-grid-item>
@@ -108,9 +117,9 @@
   <n-divider title-placement="center">结果输出</n-divider>
 
   <n-space vertical>
-    <n-card :bordered="false" class="rounded-16px shadow-sm">
-      <n-space justify="center">
-        <p class="text-24px font-bold pb-12px">T-X图</p>
+    <n-card :bordered='false' class='rounded-16px shadow-sm'>
+      <n-space justify='center'>
+        <p class='text-24px font-bold pb-12px'>热流T-X图</p>
         <!-- <n-switch v-model:value="dayOrWeek" size="large" class='pt-15px' @update:value="updateSwich">
           <template #checked> 周数据图 </template>
           <template #unchecked> 日数据图 </template>
@@ -119,7 +128,21 @@
       <!-- <n-slider v-if="!dayOrWeek" v-model:value="dayChoiceSlider" :step="1" :max="365" :min="1"
         :on-update:value="updateFigure" />
       <n-slider v-else v-model:value="dayChoiceSlider" :step="1" :max="52" :min="1" :on-update:value="updateFigure" /> -->
-      <div ref="lineRef" class="w-full h-640px" style="margin-top: 15px"></div>
+      <div ref='lineRef' class='w-full h-640px' style="margin-top: 15px;"></div>
+    </n-card>
+
+		<n-card :bordered='false' class='rounded-16px shadow-sm'>
+      <n-space justify='center'>
+        <p class='text-24px font-bold pb-12px'>冷流T-X图</p>
+        <!-- <n-switch v-model:value="dayOrWeek" size="large" class='pt-15px' @update:value="updateSwich">
+          <template #checked> 周数据图 </template>
+          <template #unchecked> 日数据图 </template>
+        </n-switch> -->
+      </n-space>
+      <!-- <n-slider v-if="!dayOrWeek" v-model:value="dayChoiceSlider" :step="1" :max="365" :min="1"
+        :on-update:value="updateFigure" />
+      <n-slider v-else v-model:value="dayChoiceSlider" :step="1" :max="52" :min="1" :on-update:value="updateFigure" /> -->
+      <div ref='lineRef1' class='w-full h-640px' style="margin-top: 15px;"></div>
     </n-card>
 
     <n-card :bordered="false" class="rounded-16px shadow-sm">
@@ -137,10 +160,10 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import { ref } from 'vue';
+import { type ECOption, useEcharts } from '@/composables';
 import type { SelectOption } from 'naive-ui';
 import { useMessage } from 'naive-ui';
 import * as XLSX from 'xlsx';
-import { type ECOption, useEcharts } from '@/composables';
 // import { result, toUpper } from 'lodash-es';
 // import { number } from 'echarts';
 import { request } from '@/service/request/index';
@@ -173,41 +196,46 @@ const isCalculating = ref<boolean>(false);
 const modeOptions = [
   {
     label: '顺流',
-    value: 1
+    value: 1,
+
   },
   {
     label: '逆流',
     value: 2
-  }
+  },
 ];
 
 // 工质选择
-const wfOptions_H = [
-  {
-    label: 'Water',
-    value: 'Water'
-  },
-  {
-    label: 'Air',
-    value: 'Air'
-  }
-];
-// 工质选择
-const wfOptions_C = [
-  {
-    label: 'Water',
-    value: 'Water'
-  },
-  {
-    label: 'Air',
-    value: 'Air'
-  }
-];
+const wfOptions_H=[
+{
+	label:'Water',
+	value:'Water',
+},
+{
+	label:'Air',
+	value:'Air',
+},
 
-// 检测到模式选择变化时，打印出来
+]
+// 工质选择
+const wfOptions_C=[
+{
+	label:'Water',
+	value:'Water',
+},
+{
+	label:'Air',
+	value:'Air',
+},
+
+]
+
+//检测到模式选择变化时，打印出来
 //  watch(simulateOrOptimizeSwitch, (newValue, oldValue) => {
 //    console.log('modeChoosed changed from', oldValue, 'to', newValue)
 //  })
+
+
 
 // echarts图表
 const lineOptions = ref<ECOption>({
@@ -262,6 +290,7 @@ const lineOptions = ref<ECOption>({
     right: '4%',
     bottom: '3%',
     containLabel: true
+
   },
   xAxis: {
     type: 'value',
@@ -270,7 +299,8 @@ const lineOptions = ref<ECOption>({
       formatter: '{value} m'
     }
   },
-  yAxis: {
+  yAxis:
+  {
     type: 'value',
     name: '温度(T)',
     axisPointer: {
@@ -279,7 +309,7 @@ const lineOptions = ref<ECOption>({
     // axisLine: { onZero: false },
     axisLabel: {
       formatter: '{value} K'
-    }
+    },
   },
   series: [
     {
@@ -290,7 +320,7 @@ const lineOptions = ref<ECOption>({
       // areaStyle: {},
       emphasis: {
         focus: 'series'
-      }
+      },
 
       //   data: [
       //     // 维度X   维度Y   其他维度 ...
@@ -303,10 +333,112 @@ const lineOptions = ref<ECOption>({
       // 		[  8.8,   4.5,  ],
       // 		[  5.4,    4.5  ]
       // ]
-    }
+    },
+
   ]
 }) as Ref<ECOption>;
 const { domRef: lineRef } = useEcharts(lineOptions);
+
+const lineOptions1 = ref<ECOption>({
+  //  显示工具箱
+  toolbox: {
+    show: true,
+    orient: 'vertical',
+    feature: {
+      //  保存为图片，背景为白色
+      saveAsImage: {
+        show: true,
+        type: 'png',
+        pixelRatio: 4
+      },
+      //  显示缩放按钮
+      dataZoom: {
+        show: true
+      },
+      //  显示类型切换按钮
+      magicType: {
+        show: true,
+        type: ['stack', 'line', 'bar']
+      },
+      dataView: {
+        show: true, // 是否显示该工具。
+        title: '数据视图',
+        readOnly: false, // 是否不可编辑（只读）
+        lang: ['数据视图', '关闭', '刷新'], // 数据视图上有三个话术，默认是['数据视图', '关闭', '刷新']
+        backgroundColor: '#fff', // 数据视图浮层背景色。
+        textareaColor: '#fff', // 数据视图浮层文本输入区背景色
+        textareaBorderColor: '#333', // 数据视图浮层文本输入区边框颜色
+        textColor: '#000', // 文本颜色。
+        buttonColor: '#c23531', // 按钮颜色。
+        buttonTextColor: '#fff' // 按钮文本颜色。
+      }
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7986'
+      }
+    }
+  },
+  legend: {
+    data: []
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+
+  },
+  xAxis: {
+    type: 'value',
+    name: '距入口段距离',
+    axisLabel: {
+      formatter: '{value} m'
+    }
+  },
+  yAxis:
+  {
+    type: 'value',
+    name: '温度(T)',
+    axisPointer: {
+      snap: true
+    },
+    // axisLine: { onZero: false },
+    axisLabel: {
+      formatter: '{value} K'
+    },
+  },
+  series: [
+    {
+      name: '换热器',
+      type: 'line',
+      smooth: true,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+
+      //   data: [
+      //     // 维度X   维度Y   其他维度 ...
+      //     [  5.4,    4.5  ],
+      // 		[  3.4,    4.5, ],
+      //     [  7.2,    2.3, ],
+      //     [  10.8,   4,   ],
+      // 		[  9.8,   8.5,  ],
+      // 		[  9.8,   9.5,  ],
+      // 		[  8.8,   4.5,  ],
+      // 		[  5.4,    4.5  ]
+      // ]
+    },
+
+  ]
+}) as Ref<ECOption>;
+const { domRef: lineRef1 } = useEcharts(lineOptions1);
 
 // 表格数据类型
 type TableData = {
@@ -315,14 +447,14 @@ type TableData = {
 
 // 图表数据类型
 type FigureData = {
-  xyAxis: Array<number>;
-  xyAxis1: Array<number>;
-};
+  xyAxis: Array<number>
+	xyAxis1: Array<number>
+}
 
 // 后端接受数据类型
 type BackEndData = {
   table: TableData;
-  figure: FigureData;
+  figure: FigureData
 };
 
 // 仿真参数数据类型
@@ -332,19 +464,20 @@ type SimulationParams = {
     '热流体入口温度(K)': number;
     '冷流体流量(kg/s)': number;
     '冷流体入口温度(K)': number;
-    '换热管长度(m)': number;
-  };
+    '换热管长度(m)':number;
+  }
 };
 
 const simulationParamsInput = ref<SimulationParams>({
   仿真参数: {
     '热流体流量(kg/s)': 4,
     '热流体入口温度(K)': 600,
-    '冷流体流量(kg/s)': 4,
+		'冷流体流量(kg/s)': 4,
     '冷流体入口温度(K)': 300,
-    '换热管长度(m)': 10
+    '换热管长度(m)':10,
   }
 });
+
 
 // 监测isOptimizationGroup的值是否改变
 // watch(isOptimizationGroup, (val) => {
@@ -353,7 +486,7 @@ const simulationParamsInput = ref<SimulationParams>({
 
 const tableColumns = ref<Array<{ title: string; key: string }>>([]);
 const tableData = ref<TableData[]>([]); // 表格数据
-const figureData = ref<FigureData>({ xyAxis: [], xyAxis1: [] }); // 图数据
+const figureData = ref<FigureData>({ xyAxis: [],xyAxis1: []}) // 图数据
 
 // 模式选择数据更新
 function updateModeSelectData(value: number, options: SelectOption) {
@@ -365,12 +498,24 @@ function updateModeSelectData(value: number, options: SelectOption) {
   tableData.value = [];
 }
 
+
+// 工质选择数据更新
+// function updatewfSelectData(value: number, options: SelectOption) {
+//   if (value == 1) {
+//     simulationParamsInput
+//   }
+// 	else if(value == 2){
+
+// 	}
+//   tableData.value = [];
+// }
+
 // 更新表格数据
 const updateFigure = () => {
   // dayChoiceSlider.value = dayValue;
   // let dataRange = dayOrWeek.value ? 24 * 7 : 24;
 
-  // 图1画面
+  //图1画面
   lineOptions.value.yAxis = {
     type: 'value',
     name: '温度(T)',
@@ -379,7 +524,7 @@ const updateFigure = () => {
     },
     axisLabel: {
       formatter: '{value} K'
-    }
+    },
   };
   lineOptions.value.xAxis = {
     type: 'value',
@@ -389,9 +534,9 @@ const updateFigure = () => {
     }
   };
 
-  lineOptions.value.series = [
-    {
-      name: '热流',
+  lineOptions.value.series = Object.keys(figureData.value.xyAxis).map((key) => {
+    return {
+      name: key,
       type: 'line',
       smooth: true,
       // stack: 'Total',
@@ -399,11 +544,34 @@ const updateFigure = () => {
       emphasis: {
         focus: 'series'
       },
-			color: '#ff2D2D',
       data: figureData.value.xyAxis
+    }
+  })
+  lineOptions.value.legend = {
+    data: []
+  }
+  //图2画面
+  lineOptions1.value.yAxis = {
+    type: 'value',
+    name: '温度(T)',
+    axisPointer: {
+      snap: true
     },
-    {
-      name: '冷流',
+    axisLabel: {
+      formatter: '{value} K'
+    },
+  };
+  lineOptions1.value.xAxis = {
+    type: 'value',
+    name: '距入口段距离',
+    axisLabel: {
+      formatter: '{value} m'
+    }
+  };
+
+  lineOptions1.value.series = Object.keys(figureData.value.xyAxis1).map((key) => {
+    return {
+      name: key,
       type: 'line',
       smooth: true,
       // stack: 'Total',
@@ -411,16 +579,16 @@ const updateFigure = () => {
       emphasis: {
         focus: 'series'
       },
-			color: '#46A3FF',
       data: figureData.value.xyAxis1
     }
-  ];
-  lineOptions.value.legend = {
-    orient: 'horizontal',
-    right: 'center'
-  };
-};
-// 图2画面
+  })
+  lineOptions1.value.legend = {
+    data: []
+  }
+
+}
+
+
 
 // const updateSwich = (value: boolean) => {
 //   dayOrWeek.value = value;
@@ -429,14 +597,14 @@ const updateFigure = () => {
 
 const message = useMessage();
 
+
 // 从后端获取数据
 function simulateToServer() {
   isCalculating.value = true;
-  request
-    .post('/simulation_1', {
-      inputdata: simulationParamsInput.value,
-      mode: modeChoosed.value
-    })
+  request.post('/simulation_1', {
+    inputdata: simulationParamsInput.value,
+    mode: modeChoosed.value
+  })
     .then(
       response => {
         isCalculating.value = false;
@@ -474,6 +642,40 @@ function simulateToServer() {
     );
 }
 
+// function optimizeToServer() {
+//   isCalculating.value = true;
+//   let isOptimizationList = Object.values(isOptimizationOptions.value).map((val) => {
+//     return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
+//   });
+//   request.post('/optimization', {
+//     "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value }),
+//     "mode": modeChoosed.value,
+//     "isopt": isOptimizationList
+//   }).then((response) => {
+//     isCalculating.value = false;
+//     if (!isNull(response.error)) {
+//       message.error('计算失败');
+//       return;
+//     }
+//     message.success('计算成功');
+//     let backEndData = response.data as BackEndData;
+//     tableData.value.push(backEndData.table);
+//     tableColumns.value = Object.keys(backEndData.table).map((key) => {
+//       return {
+//         title: key,
+//         key: key,
+//         width: 80,
+//         resizable: true,
+//         maxWidth: 200,
+//       }
+//     });
+//     figureData.value = backEndData.figure;
+//     // updateFigure(dayChoiceSlider.value);
+//   }, (error) => {
+//     console.log(error);
+//   });
+// }
+
 // 输入框格式化
 const format = (value: number | null) => {
   if (value === null) return '';
@@ -482,7 +684,7 @@ const format = (value: number | null) => {
 const parse = (input: string) => {
   const nums = input.replace(/,/g, '').trim();
   if (/^\d+(\.(\d+)?)?$/.test(nums)) return Number(nums);
-  return nums === '' ? null : Number.NaN;
+  return nums === '' ? null : Number.NaN
 };
 
 // 导出excel
@@ -512,6 +714,8 @@ function excelExport() {
 
   return 0;
 }
+
+
 </script>
 
 <style scoped></style>

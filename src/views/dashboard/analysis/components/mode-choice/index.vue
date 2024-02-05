@@ -27,7 +27,7 @@
             <template #prefix>经度</template>
           </n-input-number>
           <n-input-number v-model:value="latitude" class="py-4px" placeholder="0.0">
-            <template #prefix>纬度：</template>
+            <template #prefix>纬度</template>
           </n-input-number>
         </n-space>
       </n-card>
