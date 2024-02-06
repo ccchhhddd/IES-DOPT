@@ -11,7 +11,7 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
         meta: {
           title: '蒸汽动力循环仿真',
           requiresAuth: true,
-          icon: 'icon-park-outline:analysis'
+          icon: 'icon-park:ripple'
         }
       },
       {
@@ -21,39 +21,59 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
         meta: {
           title: '顺流与逆流式换热器',
           requiresAuth: true,
-          icon: 'icon-park-outline:workbench',
+          icon: 'icon-park-outline:water',
         }
       },
-    ],
-    meta: {
-      title: '仿真',
-      icon: 'mdi:monitor-dashboard',
-      order: 1
-    }
-  },
-	{
-    name: 'controler',
-    path: '/controler',
-    component: 'basic',
-    children: [
-
-      {
-        name: 'controler_scenario',
-        path: '/controler/scenario',
+			{
+        name: 'dashboard_venturi',
+        path: '/dashboard/venturi',
+        component: 'self',
+        meta: {
+          title: '文丘里管压力仿真',
+          requiresAuth: true,
+          icon: 'icon-park-outline:process-line',
+        }
+      },
+			{
+        name: 'dashboard_scenario',
+        path: '/dashboard/scenario',
         component: 'self',
         meta: {
           title: 'PID控制实验',
           requiresAuth: true,
-          icon: 'icon-park-outline:editor',
+          icon: 'icon-park:chart-line',
         }
       }
     ],
     meta: {
-      title: '控制',
-      icon: 'mdi:monitor-dashboard',
+      title: '仿真',
+      icon: 'icon-park:sphere',
+      order: 1
+    }
+  },
+	{
+    name: 'optimization',
+    path: '/optimization',
+    component: 'basic',
+    children: [
+			{
+        name: 'optimization_workbench',
+        path: '/optimization/workbench',
+        component: 'self',
+        meta: {
+          title: '制氢能源系统',
+          requiresAuth: true,
+          icon: 'icon-park:h2'
+        }
+      },
+    ],
+    meta: {
+      title: '优化',
+      icon: 'icon-park:smart-optimization',
       order: 2
     }
-  }],
+  },
+	],
   admin: [],
   user: []
 };

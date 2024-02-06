@@ -1,3 +1,1 @@
-using backend
-
-backend.julia_main()
+include("./src/backend.jl")

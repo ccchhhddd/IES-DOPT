@@ -1,5 +1,3 @@
-module backend
-
 using Oxygen, HTTP
 import JSON
 
@@ -7,9 +5,15 @@ import JSON
 
 include("head.jl")
 include("Controler/Polynomial.jl")
+include("Controler/Controler.jl")
 include("Simulation/HeatExchanger.jl")
 include("Simulation/Thermodynamics.jl")
 include("Simulation/VenturiMeter.jl")
+include("Optimization/structs.jl")
+include("Optimization/function_Electricity.jl")
+include("Optimization/function_Financial.jl")
+include("Optimization/function_Gas.jl")
+include("Optimization/simulate.jl")
 include("function.jl")
 
 # 跨域解决方案
@@ -18,7 +22,6 @@ const CORS_HEADERS = [
   "Access-Control-Allow-Headers" => "*",
   "Access-Control-Allow-Methods" => "POST, GET, OPTIONS"
 ]
-function julia_main()
 
 function CorsMiddleware(handler)
   return function (req::HTTP.Request)
@@ -112,6 +115,25 @@ end
   )
 end
 
+@post "/simulation_ies_h2" function (req)
+  # 将HTTP请求的正文（request body）转换为 Julia 中的字典（Dict）数据结构
+  paras = json(req)
+  # 调用后端模型获得数据
+  figure, table = simulate!(paras["inputdata"], Val(paras["mode"]))
+  #println(figure)
+  # 返回数据，匹配前端request要求的格式
+  return Dict(
+    "code" => 200,
+    "message" => "success",
+    "data" => Dict(
+      # "table" => getTableData(table),
+      "table" => OrderedDict(k => round(v, digits=2) for (k, v) in table),
+      "figure" => Dict(
+        "xyAxis" => figure,
+      )
+    ))
+end
+
 @get "/hello" function (req)
   return Dict(
     "code" => 200,
@@ -122,7 +144,4 @@ end
 # 本地测试 async=true，服务器上 async=false。同步测试便于调试
 serve(host="0.0.0.0", port=8080, async=true,middleware=[CorsMiddleware])
 # serve(port=8080, async=true)
-return 0
-end
 
-end # module backend

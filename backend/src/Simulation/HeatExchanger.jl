@@ -8,6 +8,7 @@ simulate_1!(paras,::Val{1}) = simulation_Heat_exchanger(Th = paras["仿真参数
 													  Media_h = paras["仿真参数"]["热流体种类"],
 													  Media_c = paras["仿真参数"]["冷流体种类"],
 													  Flow_type = "parallel")
+
 simulate_1!(paras,::Val{2}) = simulation_Heat_exchanger(Th = paras["仿真参数"]["热流体入口温度(K)"],
 													  Tc = paras["仿真参数"]["冷流体入口温度(K)"],
 													  Qh = paras["仿真参数"]["热流体流量(kg/s)"],
