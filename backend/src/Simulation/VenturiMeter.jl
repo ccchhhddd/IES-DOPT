@@ -1,9 +1,9 @@
 simulate_2!(paras,::Val{1}) = simulation_Venturi_Meter(Q = paras["仿真参数"]["流量(m^3/s)"], friction = true, Media = paras["仿真参数"]["流体种类"])
-
 simulate_2!(paras,::Val{2}) = simulation_Venturi_Meter(Q = paras["仿真参数"]["流量(m^3/s)"], friction = false, Media = paras["仿真参数"]["流体种类"])
 
 function simulation_Venturi_Meter(; Q,  friction::Bool = false, Media::String = "Water")
   Q = Q isa Number ? Q : parse(Float64, Q)
+  
   #参数
   d = 0.1 #喉管直径
   D = 0.2 #直径
@@ -62,5 +62,3 @@ function simulation_Venturi_Meter(; Q,  friction::Bool = false, Media::String = 
 
   return figure
 end
-
-
