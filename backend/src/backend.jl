@@ -14,6 +14,7 @@ include("Optimization/function_Electricity.jl")
 include("Optimization/function_Financial.jl")
 include("Optimization/function_Gas.jl")
 include("Optimization/simulate.jl")
+include("Jumulink/Controler.jl")
 include("function.jl")
 
 # 跨域解决方案
@@ -113,6 +114,12 @@ end
       )
     )
   )
+end
+
+@post "/jumulink" function (req::HTTP.Request)
+	# 理想PID控制器
+	input = json(req, Dict)
+	return ControlSystem(input)
 end
 
 @post "/simulation_ies_h2" function (req)

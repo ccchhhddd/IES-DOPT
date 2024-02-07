@@ -6,6 +6,7 @@ import { setupRouter } from './router';
 import { setupAssets } from './plugins';
 import { setupStore } from './store';
 import { setupI18n } from './locales';
+import axios from 'axios'
 
 async function setupApp() {
   // import assets: js、css
@@ -33,6 +34,7 @@ async function setupApp() {
 
   // mount app
   app.mount('#app');
+	axios.defaults.baseURL ='http://localhost:8080'
 }
 
 setupApp();

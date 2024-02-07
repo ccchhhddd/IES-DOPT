@@ -1,14 +1,11 @@
 <template>
-  <n-space :vertical="true" :size="16">
-    <mode-choice :title="''"/>
-    <!-- <top-chart />
-    <data-card />
-    <bottom-part /> -->
-  </n-space>
+
+    <JumulinkUI />
+
 </template>
 
 <script lang="ts" setup>
-import { ModeChoice } from './components';
+import JumulinkUI from './components/JumulinkUI.vue';
 </script>
 
 <style scoped></style>

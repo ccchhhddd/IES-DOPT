@@ -81,7 +81,11 @@
     "vuedraggable": "4.1.0",
     "wangeditor": "4.7.15",
     "xgplayer": "3.0.4",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+		"@vue-flow/background": "^1.2.0",
+    "@vue-flow/controls": "^1.1.1",
+    "@vue-flow/core": "^1.30.0",
+    "@vue-flow/minimap": "^1.4.0"
   },
   "devDependencies": {
     "@amap/amap-jsapi-types": "0.0.13",

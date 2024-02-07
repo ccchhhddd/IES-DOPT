@@ -46,9 +46,31 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
       }
     ],
     meta: {
-      title: '仿真',
+      title: '静态仿真',
       icon: 'icon-park:sphere',
       order: 1
+    }
+  },
+	{
+    name: 'controler',
+    path: '/controler',
+    component: 'basic',
+    children: [
+			{
+        name: 'controler_scenario',
+        path: '/controler/scenario',
+        component: 'self',
+        meta: {
+          title: 'Jumulink',
+          requiresAuth: true,
+          icon: 'icon-park-outline:right-branch-one'
+        }
+      },
+    ],
+    meta: {
+      title: '动态仿真',
+      icon: 'icon-park-outline:triangle-ruler',
+      order: 2
     }
   },
 	{
@@ -70,9 +92,10 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
     meta: {
       title: '优化',
       icon: 'icon-park:smart-optimization',
-      order: 2
+      order: 3
     }
   },
+
 	],
   admin: [],
   user: []

@@ -61,7 +61,7 @@ function solve_pid_A(paras)
 end
 
 # 受控对象为无自平衡能力系统
-gp = Fraction([1], [0, 1, 1])
+gp = Fraction1([1], [0, 1, 1])
 
 """
 理想PID控制器:\n
@@ -99,18 +99,18 @@ global input_x = nothing
 function transfer_function(x::IdealPid)
     if x.T1 == 0 && x.T2 != 0
         # PD控制
-        return Polynomial([x.K, x.K * x.T2])
+        return Polynomial1([x.K, x.K * x.T2])
     elseif x.T2 == 0 && x.T1 != 0
         # PI控制
-        return Fraction([x.K, x.K * x.T1], [0, x.T1])
+        return Fraction1([x.K, x.K * x.T1], [0, x.T1])
     else
         # PID控制
-        return Fraction([x.K, x.K * x.T1, x.K * x.T1 * x.T2], [0, x.T1])
+        return Fraction1([x.K, x.K * x.T1, x.K * x.T1 * x.T2], [0, x.T1])
     end
 end
 function transfer_function(x::ActualPid)
-    i = Fraction([1], [0, x.T1])
-    d = Fraction([0, x.k2 * x.T2], [1, x.T2])
+    i = Fraction1([1], [0, x.T1])
+    d = Fraction1([0, x.k2 * x.T2], [1, x.T2])
     if x.T1 == 0 && x.T2 != 0
         # PD控制
         return x.K * (1 + d)
@@ -150,7 +150,7 @@ end
 function solve_pid(x::IdealPid)
     global input_x = [x.Ki, x.Kj]
     gc = transfer_function(x)
-    g = [simplify(gc * gp / (Polynomial([1]) + gc * gp)), simplify(gp / (Polynomial([1]) + gc * gp))]
+    g = [simplify(gc * gp / (Polynomial1([1]) + gc * gp)), simplify(gp / (Polynomial1([1]) + gc * gp))]
     A = system_matrix(g)
     B = input_matrix(g)
     n = broadcast((x) -> x.denominator.num_of_items - 1, g)
@@ -181,7 +181,7 @@ end
 function solve_pid(x::ActualPid)
     global input_x = [x.Ki, x.Kj]
     gc = transfer_function(x)
-    g = [simplify(gc * gp / (Polynomial([1]) + gc * gp)), simplify(gp / (Polynomial([1]) + gc * gp))]
+    g = [simplify(gc * gp / (Polynomial1([1]) + gc * gp)), simplify(gp / (Polynomial1([1]) + gc * gp))]
     n = broadcast((x) -> x.denominator.num_of_items - 1, g)
     A = system_matrix(g)
     B = input_matrix(g)
