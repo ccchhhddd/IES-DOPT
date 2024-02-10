@@ -4,7 +4,7 @@
 
 - 离网制氢（风、光、燃气轮机、整流器、电解槽、压缩空气储能、电解槽、氢气压缩机、储氢罐、燃料电池、经济性分析）
 """
-function simulate!(machines::Tuple, fin::Financial)
+function simulate_h2!(machines::Tuple, fin::Financial)
     wt,pv,gt,iv,ca_es,ec,hc,hs= machines
 
     #一周时间后所制取的氢气 和 燃气轮机所需发电总量
@@ -13,7 +13,7 @@ function simulate!(machines::Tuple, fin::Financial)
     water = hydrogen_M[end]*9
     #计算用天然气总量=(燃烧的天然气量=所需用电量/发电效率*3600*1000/1e5/天然气低位发热值) Nm³
     natural_gas = sum_gt_Ele/gt.η*3600*1000/1e5/gt.lhv_gas
-    
+
     #计算各设备的成本
     cost_wt= totalCost(wt,fin)
     cost_pv= totalCost(pv,fin)
@@ -29,7 +29,7 @@ function simulate!(machines::Tuple, fin::Financial)
     #(可能会导致计算结果中运行时间越短单位氢气成本越高)
     #计算总成本 = 水成本 + 天然气成本 + 设备成本(投资+运维+更换)
     cost_total = costWater(water,fin)+costGas(natural_gas,fin)+machine_cost
-    
+
     #计算最终氢气的体积
     hydrogen_final_V = hydrogen_M[end] /2*22.4
     cost_H2 = costH2(hydrogen_final_V,cost_total)
@@ -46,7 +46,7 @@ end
 
 
 #API
-function simulate!(paras, ::Val{1})
+function simulate_h2!(paras, ::Val{1})
     day = paras["经济性分析参数"]["运行天数"]
     ΔT = [1.0 for i in 1:24* day  ]
     wt = WindTurbine(input_v = [6*(1+sin(2*pi*i/24)) for i in 1:length(ΔT)],
@@ -123,13 +123,13 @@ function simulate!(paras, ::Val{1})
                     cost_replace = paras["储氢罐参数"]["更换成本(元/kg)"]
                     )
     fin = Financial(
-                    
+
                     n_sys = paras["经济性分析参数"]["系统设计寿命(年)"],
                     cost_water_per_kg_H2 = paras["经济性分析参数"]["氢气生产成本(元/kg)"],
                     H2price_sale = paras["经济性分析参数"]["氢气销售价格(元/kg)"],
                     price_gas_per_Nm3 = paras["经济性分析参数"]["天然气价格(元/Nm³)"]
                     )
     machines = (wt,pv,gt,iv,ca_es,ec,hc,hs)
-    cost_H2_hhh = simulate!(machines,fin)
+    cost_H2_hhh = simulate_h2!(machines,fin)
     return cost_H2_hhh
-end   
+end

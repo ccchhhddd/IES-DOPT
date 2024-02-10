@@ -126,7 +126,7 @@ end
   # 将HTTP请求的正文（request body）转换为 Julia 中的字典（Dict）数据结构
   paras = json(req)
   # 调用后端模型获得数据
-  figure, table = simulate!(paras["inputdata"], Val(paras["mode"]))
+  figure, table = simulate_h2!(paras["inputdata"], Val(paras["mode"]))
   #println(figure)
   # 返回数据，匹配前端request要求的格式
   return Dict(
