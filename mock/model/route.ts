@@ -57,43 +57,11 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
     component: 'basic',
     children: [
 			{
-        name: 'controler_analysis',
-        path: '/controler/analysis',
-        component: 'multi',
-				children: [
-					{
-						name: 'controler_analysis_editor',
-						path: '/controler/analysis/editor',
-						component: 'self',
-						meta: {
-							title: '建模页',
-							requiresAuth: true,
-							icon: 'icon-park-outline:cube'
-						}
-					},
-					{
-						name: 'controler_analysis_painting',
-						path: '/controler/analysis/painting',
-						component: 'self',
-						meta: {
-							title: '绘图页',
-							requiresAuth: true,
-							icon: 'icon-park-outline:paint'
-						}
-					}
-				],
-        meta: {
-          title: 'Ai4ESimulator',
-          requiresAuth: true,
-          icon: 'icon-park-outline:editor'
-        }
-      },
-			{
         name: 'controler_scenario',
         path: '/controler/scenario',
         component: 'self',
         meta: {
-          title: 'Ai4EJumulink',
+          title: 'Jumulink',
           requiresAuth: true,
           icon: 'icon-park-outline:right-branch-one'
         }
@@ -111,23 +79,13 @@ export const routeModel: Record<Auth.RoleType, AuthRoute.Route[]> = {
     component: 'basic',
     children: [
 			{
-        name: 'optimization_analysis',
-        path: '/optimization/analysis',
-        component: 'self',
-        meta: {
-          title: '风光制氢',
-          requiresAuth: true,
-          icon: 'icon-park:h2',
-        }
-      },
-			{
         name: 'optimization_workbench',
         path: '/optimization/workbench',
         component: 'self',
         meta: {
-          title: '风光煤气储发电',
+          title: '制氢能源系统',
           requiresAuth: true,
-          icon: 'icon-park-outline:lightning'
+          icon: 'icon-park:h2'
         }
       },
     ],

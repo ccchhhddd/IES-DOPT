@@ -1,8 +1,9 @@
 <template>
   <n-space :vertical="true" :size="16">
-    <!-- <workbench-header />
-    <workbench-main /> -->
-    <mode-choice />
+    <mode-choice :title="''"/>
+    <!-- <top-chart />
+    <data-card />
+    <bottom-part /> -->
   </n-space>
 </template>
 
