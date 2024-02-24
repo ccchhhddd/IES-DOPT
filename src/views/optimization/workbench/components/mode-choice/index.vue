@@ -1,5 +1,5 @@
 <template>
-  <n-divider title-placement='center'>{{ props.title + props.description }}制氢综合能源</n-divider>
+  <!-- <n-divider title-placement='center'>{{ props.title + props.description }}青海跨省跨区外送型新能源大基地项目</n-divider> -->
 
   <!-- 第一行 模式选择与经纬度-->
   <n-grid :x-gap='16' :y-gap='16' :item-responsive='true' class='pb-15px'>
@@ -23,7 +23,7 @@
             <template #prefix>经度</template>
           </n-input-number>
           <n-input-number v-model:value='latitude' class='py-5px' placeholder='0.0'>
-            <template #prefix>纬度<!-- prefix: 前缀 --></template>
+            <template #prefix>纬度： <!-- prefix: 前缀 --></template>
           </n-input-number>
         </n-space>
       </n-card>
@@ -31,7 +31,7 @@
 
   </n-grid>
 
-  <!-- 第二行 系统图片与参数输入 -->
+  <!-- 第二行 系统图片与外送负荷曲线 -->
   <n-grid :x-gap='16' :y-gap='16' :item-responsive='true' class='pb-15px'>
     <!-- 系统图片 -->
     <n-grid-item span='0:24 640:24 1024:12'>
@@ -39,85 +39,135 @@
         <n-space justify='center'>
           <p class='text-28px font-bold pb-12px'>系统图</p>
         </n-space>
-        <n-space v-if='modeChoosed == 1' justify='center'>
-          <n-image src="/离网制氢系统结构图.png" alt="mode-choice" width="600" />
+        <n-space v-if='modeChoosed == 7' justify='center'>
+          <n-image src="/风光煤气储.png"  width="600" />
         </n-space>
       </n-card>
     </n-grid-item>
     <!-- 参数输入 -->
     <n-grid-item span='0:24 640:24 1024:12'>
-      <n-card class='rounded-16px shadow-sm'>
-        <n-tabs type='line' size='large' :tabs-padding='20' pane-style='padding: 20px;'>
-          <n-tab-pane name='仿真计算参数输入'>
-            <n-spin size="large" :show="isCalculating">
-              <template #description>
-                正在计算中，请稍等...
-              </template>
-              <n-collapse :accordion="true">
-                <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'>
-                  <!-- 只有离网开启储能参数输入 -->
-                  <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
-                    <n-input-number v-for="(val_input, key_input, _) in (val as { [key: string]: number; })"
-                      v-model:value='val[key_input as keyof typeof val]'
-                      :placeholder='val_input.toString()' :parse="parse" :format="format">
-                      <template #prefix>{{ key_input }}： </template>
-                    </n-input-number>
-                  </n-space>
-                </n-collapse-item>
-                <n-divider></n-divider>
-              </n-collapse>
-              <n-button size='large' type='info' strong round style='width: 100%;' :on-click="simulateToServer">
-                点击进行仿真计算
-              </n-button>
-            </n-spin>
-          </n-tab-pane>
-
-          <!-- <n-tab-pane name='优化计算参数输入'>
-            <n-spin size="large" :show="isCalculating">
-              <template #description>
-                正在计算中，请稍等......
-              </template>
-              <n-gradient-text :size="16">选择待优化容量参数:</n-gradient-text>
-              <n-select multiple placeholder="选择容量优化参数" v-model:options="isOptimizationOptions"
-                v-model:value="isOptimizationGroup" style='margin-bottom: 15px;margin-top: 5px;' />
-              <n-collapse :accordion="true">
-                <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
-                  :disabled='(modeChoosed < 3) && (ind == 4)'>
-                  <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
-                    <n-input-number v-for="(val_input, key_input, ind_input) in (val as { [key: string]: number; })"
-                      v-model:value='val[key_input as keyof typeof val]'
-                      :disabled="(modeChoosed >= 2 && key_input == '卖电电价（￥/kwh）') || (modeChoosed == 3 && key_input == '买电电价（￥/kwh）') ||
-                        (ind <= 4 && ind_input == 0 && isOptimizationGroup.indexOf(isOptimizationOptions[ind].value) >= 0)" :placeholder='val_input.toString()'
-                      :parse="parse" :format="format">
-                      <template #prefix>{{ key_input }}： </template>
-                    </n-input-number>
-
-                  </n-space>
-                </n-collapse-item>
-                <n-divider></n-divider>
-              </n-collapse>
-              <n-button size='large' type='info' strong round style='width: 100%;'
-                :on-click="optimizeToServer">点击进行优化计算</n-button>
-            </n-spin>
-          </n-tab-pane> -->
-
-        </n-tabs>
+      <n-card :bordered='false' class='rounded-16px shadow-sm'>
+        <n-space justify='center'>
+          <n-button round :on-click='jsonInput' style='margin-top: 3px;'>导入数据</n-button>
+          <p class='text-24px font-bold pb-12px'>外送通道负荷</p>
+          <n-button round :on-click='jsonExport' style='margin-top: 3px;'>导出数据</n-button>
+        </n-space>
+        <n-space justify='center'>
+          <n-select :options="powerLineOptions" v-model:value="powerLineChoosed" style='width: 150px;' />
+          <n-select :options="powerHoursOptions" v-model:value="powerMonthChoosed" style='width: 100px;' />
+          <n-input-number v-model:value="powerInput" style='width: 250px;'>
+            <template #prefix>输入修改值：</template>
+            <template #suffix>万kW</template>
+          </n-input-number>
+          <n-button round :on-click="updatePowerData">点击修改</n-button>
+        </n-space>
+        <div ref='powerlineRef' class='w-full h-400px' style="margin-top: 15px;"></div>
       </n-card>
     </n-grid-item>
   </n-grid>
+
+  <!-- 第三行 参数输入 -->
+  <n-card class='rounded-16px shadow-sm'>
+    <n-tabs type='line' size='large' :tabs-padding='20' pane-style='padding: 20px;'>
+      <n-tab-pane name='仿真计算参数输入'>
+        <n-spin size="large" :show="isCalculating">
+          <template #description>
+            正在计算中，请稍等...
+          </template>
+          <n-tabs type="segment" trigger="click">
+            <n-tab-pane v-for="(val, key, ind) in simulationParamsInput" :tab='key' :name='ind'>
+              <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+                <n-input-number v-for="(val_input, key_input, _) in (val as { [key: string]: number; })"
+                  v-model:value='val[key_input as keyof typeof val]' :placeholder='val_input.toString()' :parse="parse"
+                  :format="format">
+                  <template #prefix>{{ key_input }}： </template>
+                </n-input-number>
+              </n-space>
+            </n-tab-pane>
+          </n-tabs>
+
+          <!-- <n-collapse :accordion="true">
+            <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'>
+              <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+                <n-input-number v-for="(val_input, key_input, _) in (val as { [key: string]: number; })"
+                  v-model:value='val[key_input as keyof typeof val]' :placeholder='val_input.toString()'
+                  :parse="parse" :format="format">
+                  <template #prefix>{{ key_input }}： </template>
+                </n-input-number>
+              </n-space>
+            </n-collapse-item>
+            <n-divider></n-divider>
+          </n-collapse> -->
+
+          <n-button size='large' type='info' strong round style='width: 100%;' :on-click="simulateToServer">
+            点击进行仿真计算
+          </n-button>
+        </n-spin>
+      </n-tab-pane>
+
+      <n-tab-pane name='优化计算参数输入'>
+        <n-spin size="large" :show="isCalculating">
+          <template #description>
+            正在计算中，请稍等......
+          </template>
+          <n-gradient-text :size="16">选择待优化容量参数:</n-gradient-text>
+          <n-select multiple placeholder="选择容量优化参数" v-model:options="isOptimizationOptions"
+            v-model:value="isOptimizationGroup" style='margin-bottom: 15px;margin-top: 5px;' />
+          <n-tabs type="segment" trigger="click">
+            <n-tab-pane v-for="(val, key, ind) in simulationParamsInput" :tab="key" :name="ind">
+              <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+                <n-input-number v-for="(_, key_input) in (val as { [key: string]: number; })"
+                  v-model:value='val[key_input as keyof typeof val]' :parse="parse" :format="format">
+                  <template #prefix>{{ key_input }}： </template>
+                </n-input-number>
+              </n-space>
+            </n-tab-pane>
+          </n-tabs>
+
+          <!-- <n-collapse :accordion="true">
+            <n-collapse-item v-for="(val, key, ind) in simulationParamsInput" :title='key' :name='ind'
+              :disabled='((modeChoosed == 4) && (ind == 4 || ind == 3)) || ((modeChoosed == 5) && (ind == 4)) || ((modeChoosed == 6) && (ind == 3))'>
+              <n-space vertical justify='space-between' size='large' style='margin-bottom: 10px;'>
+                <n-input-number v-for="(_, key_input) in (val as { [key: string]: number; })"
+                  v-model:value='val[key_input as keyof typeof val]' :parse="parse" :format="format">
+                  <template #prefix>{{ key_input }}： </template>
+                </n-input-number>
+              </n-space>
+            </n-collapse-item>
+            <n-divider></n-divider>
+          </n-collapse> -->
+
+          <n-button size='large' type='info' strong round style='width: 100%;'
+            :on-click="optimizeToServer">点击进行优化计算</n-button>
+        </n-spin>
+      </n-tab-pane>
+
+    </n-tabs>
+  </n-card>
 
 
   <n-divider title-placement='center'>
     结果输出
   </n-divider>
+
   <n-space vertical>
     <n-card :bordered='false' class='rounded-16px shadow-sm'>
       <n-space justify='center'>
-                <p class='text-24px font-bold pb-12px'>系统储氢M-T图</p>
+        <p class='text-24px font-bold pb-12px'>风光环境数据图</p>
       </n-space>
-      <!-- <n-slider v-if="!dayOrWeek" v-model:value="dayChoiceSlider" :step="1" :max="365" :min="1"
+      <div ref='envFigureRef' class='w-full h-640px' style="margin-top: 15px;"></div>
+    </n-card>
+    <n-card :bordered='false' class='rounded-16px shadow-sm'>
+      <n-space justify='center'>
+        <p class='text-24px font-bold pb-12px'>系统小时运行图</p>
+        <n-switch v-model:value="dayOrWeek" size="large" class='pt-15px' @update:value="updateSwich">
+          <template #checked> 周数据图 </template>
+          <template #unchecked> 日数据图 </template>
+        </n-switch>
+      </n-space>
+      <n-slider v-if="!dayOrWeek" v-model:value="dayChoiceSlider" :step="1" :max="365" :min="1"
         :on-update:value="updateFigure" />
-      <n-slider v-else v-model:value="dayChoiceSlider" :step="1" :max="52" :min="1" :on-update:value="updateFigure" /> -->
+      <n-slider v-else v-model:value="dayChoiceSlider" :step="1" :max="52" :min="1" :on-update:value="updateFigure" />
       <div ref='lineRef' class='w-full h-640px' style="margin-top: 15px;"></div>
     </n-card>
     <n-card :bordered='false' class='rounded-16px shadow-sm'>
@@ -136,11 +186,15 @@ import { ref, Ref } from 'vue';
 // import { watch } from 'vue';
 import { type ECOption, useEcharts } from '@/composables';
 import * as XLSX from 'xlsx';
-import { useMessage, SelectOption } from 'naive-ui'
+import { useMessage, SelectOption, NButton } from 'naive-ui'
 import { request } from '@/service/request/index';
-import { isNull } from '~/src/utils';
-
+import { isNull, range } from 'lodash-es';
+import { h } from 'vue';
+const COLORS = [
+  "#8B4513", "#ff0000", "#009ad6", "#fcaf17", "#4f5555", "#8552a1", "#a1a3a6", "#fedcbd", "#411445", "#FF8000"
+] // 颜色数组，分别为
 // 定义子组件参数childrenParams，测试用，不影响主组件
+// import fs from 'fs-extra';
 const props = defineProps({
   title: {
     type: String,
@@ -152,11 +206,11 @@ const props = defineProps({
   },
 });
 
-const modeChoosed = ref<number>(1); //  1: 离网制氢模式
+const modeChoosed = ref<number>(7); //  7 风光气煤储
 // 经纬度数据
 const longitude = ref<number>(0.0);
 const latitude = ref<number>(0.0);
-const dayOrWeek = ref<boolean>(false);
+const dayOrWeek = ref<boolean>(true);
 
 const isCalculating = ref<boolean>(false);
 // 滑动条数据
@@ -165,9 +219,10 @@ const dayChoiceSlider = ref<number>(1);
 // 模式选择选项
 const modeOptions = [
   {
-    label: '离网制氢模式',
-    value: 1
-  }];
+    label: '风光气煤储',
+    value: 7
+  },
+];
 
 //  检测到模式选择变化时，打印出来
 //  watch(simulateOrOptimizeSwitch, (newValue, oldValue) => {
@@ -220,7 +275,10 @@ const lineOptions = ref<ECOption>({
     }
   },
   legend: {
-    data: ['下载量', '注册数']
+    data: ['下载量', '注册数'],
+    textStyle: {
+      fontSize: 20
+    },
   },
   grid: {
     left: '3%',
@@ -239,9 +297,9 @@ const lineOptions = ref<ECOption>({
   yAxis: [
     {
       type: 'value',
-      name: '能量',
+      name: '功率/ 万kW',
       axisLabel: {
-        formatter: '{value} kW'
+        formatter: '{value}'
       }
     }
   ],
@@ -250,6 +308,7 @@ const lineOptions = ref<ECOption>({
       name: '下载量',
       type: 'line',
       smooth: true,
+      showSymbol: false,
       stack: 'Total',
       areaStyle: {},
       emphasis: {
@@ -261,6 +320,7 @@ const lineOptions = ref<ECOption>({
       name: '注册数',
       type: 'line',
       smooth: true,
+      showSymbol: false,
       stack: 'Total',
       areaStyle: {},
       emphasis: {
@@ -272,6 +332,251 @@ const lineOptions = ref<ECOption>({
 }) as Ref<ECOption>;
 const { domRef: lineRef } = useEcharts(lineOptions);
 
+const powerLineJson = ref({
+  winter: [3, 3, 3, 3, 3, 3, 3, 3, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 3, 3, 3, 3, 3, 3].map((val) => {
+    return val * 1000000;
+  }),
+  summer: [4, 4, 4, 4, 4, 4, 4, 5.6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 4].map((val) => {
+    return val * 1000000;
+  }),
+})
+// 外送通道负荷图
+const powerlineOptions = ref<ECOption>({
+  //  显示工具箱
+  toolbox: {
+    show: true,
+    orient: 'vertical',
+    feature: {
+      //  保存为图片，背景为白色
+      saveAsImage: {
+        show: true,
+        type: 'png',
+        pixelRatio: 4,
+      },
+      //  显示缩放按钮
+      dataZoom: {
+        show: true
+      },
+      dataView: {
+        show: true,                         // 是否显示该工具。
+        title: '数据视图',
+        readOnly: false,                    // 是否不可编辑（只读）
+        lang: ['数据视图', '关闭', '刷新'],  // 数据视图上有三个话术，默认是['数据视图', '关闭', '刷新']
+        backgroundColor: '#fff',             // 数据视图浮层背景色。
+        textareaColor: '#fff',               // 数据视图浮层文本输入区背景色
+        textareaBorderColor: '#333',         // 数据视图浮层文本输入区边框颜色
+        textColor: '#000',                    // 文本颜色。
+        buttonColor: '#c23531',              // 按钮颜色。
+        buttonTextColor: '#fff',             // 按钮文本颜色。
+      },
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7985'
+      }
+    }
+  },
+  legend: {
+    data: ['夏季曲线', '冬季曲线']
+  },
+  grid: {
+    left: '2%',
+    right: '8%',
+    bottom: '1%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'category',
+    data: range(0, 24),
+    name: '小时数',
+    axisLabel: {
+      formatter: '{value} h'
+    }
+  },
+  height: '330px',
+  yAxis: [
+    {
+      type: 'value',
+      name: '功率/ 万kW',
+      axisLabel: {
+        formatter: '{value}'
+      }
+    }
+  ],
+  series: [
+    {
+      name: '冬季曲线',
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: powerLineJson.value.winter.map((val) => {
+        return val / 1e4;
+      })
+    },
+    {
+      name: '夏季曲线',
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: powerLineJson.value.summer.map((val) => {
+        return val / 1e4;
+      })
+    },
+  ]
+}) as Ref<ECOption>;
+const { domRef: powerlineRef } = useEcharts(powerlineOptions);
+// 风光环境数据图
+const envFigureOptions = ref<ECOption>({
+  //  显示工具箱
+  toolbox: {
+    show: true,
+    orient: 'vertical',
+    feature: {
+      //  保存为图片，背景为白色
+      saveAsImage: {
+        show: true,
+        type: 'png',
+        pixelRatio: 4,
+      },
+      //  显示缩放按钮
+      dataZoom: {
+        show: true
+      },
+      //  显示类型切换按钮
+      magicType: {
+        show: true,
+        type: ['stack', 'line', 'bar']
+      },
+      dataView: {
+        show: true,                         // 是否显示该工具。
+        title: '数据视图',
+        readOnly: false,                    // 是否不可编辑（只读）
+        lang: ['数据视图', '关闭', '刷新'],  // 数据视图上有三个话术，默认是['数据视图', '关闭', '刷新']
+        backgroundColor: '#fff',             // 数据视图浮层背景色。
+        textareaColor: '#fff',               // 数据视图浮层文本输入区背景色
+        textareaBorderColor: '#333',         // 数据视图浮层文本输入区边框颜色
+        textColor: '#000',                    // 文本颜色。
+        buttonColor: '#c23531',              // 按钮颜色。
+        buttonTextColor: '#fff',             // 按钮文本颜色。
+      },
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7985'
+      }
+    }
+  },
+  legend: {
+    data: ['辐射强度', '风速'],
+    textStyle: {
+      fontSize: 20
+    },
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'category',
+    data: ['06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', '24:00'],
+    name: '小时数',
+    axisLabel: {
+      formatter: '{value} h'
+    }
+  },
+  yAxis: [
+    {
+      type: 'value',
+      position: 'left',
+      name: '辐照度/ W/m^2',
+      axisLabel: {
+        formatter: '{value}'
+      }
+    },
+    {
+      type: 'value',
+      position: 'right',
+      name: '风速 / m/s',
+      axisLabel: {
+        formatter: '{value}'
+      }
+    },
+
+  ],
+  series: [
+    {
+      name: '辐射强度',
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      yAxisIndex: 0,
+      // stack: '',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [4623, 6145, 6268, 6411, 1890, 4251, 2978, 3880, 3606, 4311]
+    },
+    {
+      name: '风速',
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      yAxisIndex: 1,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [2208, 2016, 2916, 4512, 8281, 2008, 1963, 2367, 2956, 678]
+    }
+  ]
+}) as Ref<ECOption>;
+const { domRef: envFigureRef } = useEcharts(envFigureOptions);
+
+const powerLineOptions = [
+  {
+    label: '冬季曲线',
+    value: 0
+  },
+  {
+    label: '夏季曲线',
+    value: 1
+  }
+];
+const powerLineChoosed = ref<number>(0);
+
+const powerHoursOptions = Array.from({ length: 24 }, (_, i) => {
+  return {
+    label: `${i} 时`,
+    value: i + 1
+  }
+});
+
+const powerMonthChoosed = ref<number>(1);
+
+const powerInput = ref<number>(0);
+
 // 表格数据类型
 type TableData = {
   [key: string]: number
@@ -279,180 +584,181 @@ type TableData = {
 
 // 图表数据类型
 type FigureData = {
-  xyAxis: Array<number>;
+  xAxis: Array<number>
+  yAxis: {
+    [key: string]: Array<number>
+  }
 }
 
 // 后端接受数据类型
 type BackEndData = {
   table: TableData
   figure: FigureData
+  envFigure: FigureData
 }
 
 // 仿真参数数据类型
 type SimulationParams = {
-  "风力发电参数": {
-    "总装机容量(kW)": number,
-		"单机容量(kW)": number,
-    "机组数量": number,
-    "风轮传动效率": number,
-    "发电机效率": number,
-    "使用年限(年)": number,
-    "初始成本(元/kW)": number,
-    "年运维成本(元/kW)": number,
-    "更换成本(元/kW)": number
+  "光伏参数": {
+    "装机容量（千瓦）": number,
+    // "综合效率": number,
+    "产品寿命（年）": number,
+    "投资成本（￥/kW）": number,
+    //"运维成本（￥/kW）": number,
+    "替换成本（￥/kW）": number,
+    //"单位设备容量（kW）": number
   },
-  "光伏发电参数": {
-    "总装机容量(kW)": number,
-    "单机容量(kW)": number,
-    "机组数量": number,
-    "光伏板面积(m2)": number,
-    "光伏板吸收率": number,
-    "使用年限(年)": number,
-    "初始成本(元/kW)": number,
-		"年运维成本(元/kW)": number,
-		"更换成本(元/kW)": number,
+  "风电参数": {
+    "装机容量（千瓦）": number,
+    // "综合效率": number,
+    "产品寿命（年）": number,
+    "投资成本（￥/kW）": number,
+    //"运维成本（￥/kW）": number,
+    "替换成本（￥/kW）": number,
+    //"单位设备容量（kW）": number
   },
-  "燃气轮机发电参数": {
-    "总装机容量(kW)": number,
-    "最小出力效率": number,
-    "出力调整系数": number,
-    "发电效率": number,
-    "低位发热值(MJ/Nm³)": number,
-    "使用年限(年)": number,
-    "初始成本(元/kW)": number,
-		"年运维成本(元/kW)": number,
-		"更换成本(元/kW)": number,
-  },
-  "整流器参数": {
-    "装机额定功率(kW)": number,
-    "整流器综合效率": number,
-    "使用年限(年)": number,
-    "初始成本(元/kg)": number,
-    "年运维成本(元/kg)": number,
-    "更换成本(元/kg)": number,
+  "抽水蓄能参数": {
+    "装机功率（千瓦）": number,
+    "小时数（小时）": number,
+    //"充能阈值": number,
+    "产品寿命（年）": number,
+    "投资成本（￥/kW）": number,
+    //"运维成本（￥/kW）": number,
+    "替换成本（￥/kW）": number,
+    "容量电价（￥/kW）": number
+    //"单位设备容量（kW）": number
   },
   "压缩空气储能参数": {
-    "装机额定功率(kW)": number,
-    "充电效率": number,
-    "使用年限(年)": number,
-    "初始成本(元/kW)": number,
-    "年运维成本(元/kW)": number,
-    "更换成本(元/kW)": number,
+    "装机功率（千瓦）": number,
+    "小时数（小时）": number,
+    //"充能阈值": number,
+    "产品寿命（年）": number,
+    "投资成本（￥/kW）": number,
+    //"运维成本（￥/kW）": number,
+    "替换成本（￥/kW）": number,
+    //"单位设备容量（kW）": number
   },
-  "电解槽参数": {
-    "额定功率(kW)": number,
-    "氢燃料低位发热值(MJ/kg)": number,
-    "负载最小效率": number,
-    "使用年限(年)": number,
-    "初始成本(元/kW)": number,
-    "年运维成本(元/kW)": number,
-    "更换成本(元/kW)": number,
+  "电化学储能参数": {
+    "装机功率（千瓦）": number,
+    "小时数（小时）": number,
+    //"充能阈值": number,
+    "产品寿命（年）": number,
+    "投资成本（￥/kW）": number,
+    //"运维成本（￥/kW）": number,
+    "替换成本（￥/kW）": number,
+    //"单位设备容量（kW）": number
   },
-	"氢气压缩机参数": {
-    "装机容量(kg)": number,
-    "单位耗电量(kWh/kg)": number,
-    "使用年限(年)": number,
-    "初始成本(元/kg)": number,
-    "年运维成本(元/kg)": number,
-    "更换成本(元/kg)": number,
+  "气电参数": {
+    "装机容量（千瓦）": number,
+    "发电效率": number,
+    "产品寿命（年）": number,
+    "投资成本（￥/kW）": number,
+    //"运维成本（￥/kW）": number,
+    "替换成本（￥/kW）": number,
+    //"单位设备容量（kW）": number
   },
-	"储氢罐参数": {
-    "装机容量(kg)": number,
-    "使用年限(年)": number,
-    "初始成本(元/kg)": number,
-    "年运维成本(元/kg)": number,
-    "更换成本(元/kg)": number,
+  "煤电参数": {
+    "装机容量（千瓦）": number,
+    "发电效率": number,
+    "产品寿命（年）": number,
+    "投资成本（￥/kW）": number,
+    //"运维成本（￥/kW）": number,
+    "替换成本（￥/kW）": number,
+    //"单位设备容量（kW）": number
   },
-	"经济性分析参数": {
-    "运行天数": number,
-    "系统设计寿命(年)": number,
-    "氢气生产成本(元/kg)": number,
-    "氢气销售价格(元/kg)": number,
-    "天然气价格(元/Nm³)": number,
-  },
+  "经济性参数": {
+    "系统运营年限（年）": number,
+    "煤价格（￥/kg）": number,
+    "卖电电价（￥/kwh）": number,
+    "燃气价格（￥/Nm3）": number,
+    "目标收益率": number,
+    "所得税率": number,
+    //"折旧率": number,
+    "煤电碳排放因子（kg/kWh）": number,
+    "气电碳排放因子（kg/kWh）": number,
+  }
 }
 
 const simulationParamsInput = ref<SimulationParams>({
-  "风力发电参数": {
-    "总装机容量(kW)": 4e6,
-		"单机容量(kW)": 1.0,
-    "机组数量": 1,
-    "风轮传动效率": 0.96,
-    "发电机效率": 0.93,
-    "使用年限(年)": 20,
-    "初始成本(元/kW)": 4800,
-    "年运维成本(元/kW)": 720,
-    "更换成本(元/kW)": 4800
+  "光伏参数": {
+    "装机容量（千瓦）": 8e6,
+    // "综合效率": 0.9,
+    "产品寿命（年）": 20,
+    "投资成本（￥/kW）": 3500,
+    //"运维成本（￥/kW）": 135,
+    "替换成本（￥/kW）": 3500,
+    //"单位设备容量（kW）": 650
   },
-  "光伏发电参数": {
-    "总装机容量(kW)": 1e7,
-    "单机容量(kW)": 1.0,
-    "机组数量": 1,
-    "光伏板面积(m2)": 3.1,
-    "光伏板吸收率": 0.9,
-    "使用年限(年)": 20,
-    "初始成本(元/kW)": 3800,
-		"年运维成本(元/kW)": 190,
-		"更换成本(元/kW)": 3800,
+  "风电参数": {
+    "装机容量（千瓦）": 4e6,
+    // "综合效率": 0.9,
+    "产品寿命（年）": 20,
+    "投资成本（￥/kW）": 4300,
+    //"运维成本（￥/kW）": 120,
+    "替换成本（￥/kW）": 4300,
+    //"单位设备容量（kW）": 650
   },
-  "燃气轮机发电参数": {
-    "总装机容量(kW)": 4e6,
-    "最小出力效率": 0.2,
-    "出力调整系数": 0.05,
-    "发电效率": 0.6,
-    "低位发热值(MJ/Nm³)": 34.94,
-    "使用年限(年)": 20,
-    "初始成本(元/kW)": 4800,
-		"年运维成本(元/kW)": 160,
-		"更换成本(元/kW)": 4800,
-  },
-  "整流器参数": {
-    "装机额定功率(kW)": 15000,
-    "整流器综合效率": 0.9,
-    "使用年限(年)": 20,
-    "初始成本(元/kg)": 2300,
-    "年运维成本(元/kg)": 46,
-    "更换成本(元/kg)": 2300,
+  "抽水蓄能参数": {
+    "装机功率（千瓦）": 3.5e6,
+    "小时数（小时）": 6,
+    //"充能阈值": 0.9,
+    "产品寿命（年）": 20,
+    "投资成本（￥/kW）": 1500,
+    //"运维成本（￥/kW）": 45,
+    "替换成本（￥/kW）": 1500,
+    "容量电价（￥/kW）": 500,
+    //"单位设备容量（kW）": 650
   },
   "压缩空气储能参数": {
-    "装机额定功率(kW)": 15000,
-    "充电效率": 0.6,
-    "使用年限(年)": 15,
-    "初始成本(元/kW)": 3800,
-    "年运维成本(元/kW)": 190,
-    "更换成本(元/kW)": 3800,
+    "装机功率（千瓦）": 0,
+    "小时数（小时）": 0,
+    //"充能阈值": 0.9,
+    "产品寿命（年）": 20,
+    "投资成本（￥/kW）": 1500,
+    //"运维成本（￥/kW）": 45,
+    "替换成本（￥/kW）": 1500,
+    //"单位设备容量（kW）": 650
   },
-  "电解槽参数": {
-    "额定功率(kW)": 5e5,
-    "氢燃料低位发热值(MJ/kg)": 241,
-    "负载最小效率": 0.0,
-    "使用年限(年)": 10,
-    "初始成本(元/kW)": 2000,
-    "年运维成本(元/kW)": 100,
-    "更换成本(元/kW)": 2000,
+  "电化学储能参数": {
+    "装机功率（千瓦）": 0.7e6,
+    "小时数（小时）": 2,
+    //"充能阈值": 0.9,
+    "产品寿命（年）": 10,
+    "投资成本（￥/kW）": 1500,
+    //"运维成本（￥/kW）": 45,
+    "替换成本（￥/kW）": 1500,
+    //"单位设备容量（kW）": 650
   },
-	"氢气压缩机参数": {
-    "装机容量(kg)": 5e5,
-    "单位耗电量(kWh/kg)": 1.0,
-    "使用年限(年)": 20,
-    "初始成本(元/kg)": 2300,
-    "年运维成本(元/kg)": 46,
-    "更换成本(元/kg)": 2300,
+  "气电参数": {
+    "装机容量（千瓦）": 2e6,
+    "发电效率": 0.58,
+    "产品寿命（年）": 25,
+    "投资成本（￥/kW）": 2500,
+    //"运维成本（￥/kW）": 100,
+    "替换成本（￥/kW）": 2500,
+    //"单位设备容量（kW）": 1000
   },
-	"储氢罐参数": {
-    "装机容量(kg)": 5e5,
-    "使用年限(年)": 20,
-    "初始成本(元/kg)": 2300,
-    "年运维成本(元/kg)": 46,
-    "更换成本(元/kg)": 2300,
+  "煤电参数": {
+    "装机容量（千瓦）": 0,
+    "发电效率": 0.45,
+    "产品寿命（年）": 25,
+    "投资成本（￥/kW）": 4600,
+    //"运维成本（￥/kW）": 320,
+    "替换成本（￥/kW）": 4600,
+    //"单位设备容量（kW）": 1000
   },
-	"经济性分析参数": {
-    "运行天数": 700,
-    "系统设计寿命(年)": 20,
-    "氢气生产成本(元/kg)": 0.021,
-    "氢气销售价格(元/kg)": 25.58,
-    "天然气价格(元/Nm³)": 1.7,
-  },
+
+  "经济性参数": {
+    "系统运营年限（年）": 20,
+    "煤价格（￥/kg）": 0.8,
+    "卖电电价（￥/kwh）": 0.228,
+    "燃气价格（￥/Nm3）": 1.56,
+    "目标收益率": 0.06,
+    "所得税率": 0.25,
+    //"折旧率": 0.05,
+    "煤电碳排放因子（kg/kWh）": 0.8,
+    "气电碳排放因子（kg/kWh）": 0.3647,
+  }
 });
 
 const isOptimizationGroup = ref<Array<number>>([2])
@@ -467,18 +773,26 @@ const isOptimizationOptions = ref([
     value: 1
   },
   {
-    label: "电解容量",
+    label: "抽水蓄能容量",
     value: 2
   },
   {
-    label: '储氢容量',
-    value: 3,
-    disabled: true
+    label: "压缩空气储能容量",
+    value: 3
   },
   {
-    label: '储能容量',
-    value: 4,
-    disabled: true
+    label: "电化学储能容量",
+    value: 4
+  },
+  {
+    label: '煤电容量',
+    value: 5,
+    disabled: false
+  },
+  {
+    label: '气电容量',
+    value: 6,
+    disabled: false
   }
 ])
 
@@ -487,73 +801,130 @@ const isOptimizationOptions = ref([
 //   console.log(val)
 // })
 
+// 表格头部数据
 const tableColumns = ref<Array<{ title: string, key: string }>>([]);
 const tableData = ref<TableData[]>([]) // 表格数据
-const figureData = ref<FigureData>({ xyAxis: [] }) // 图数据
+const figureData = ref<FigureData>({ xAxis: [], yAxis: {} }) // 图数据
+const envFigureData = ref<FigureData>({ xAxis: [], yAxis: {} }) // 环境图数据
 
 // 模式选择数据更新
 function updateModeSelectData(value: number, options: SelectOption) {
-  if (value == 1) {
-    isOptimizationOptions.value[4].disabled = true;
+  if (value == 4) {
+    isOptimizationOptions.value[5].disabled = true;
+    isOptimizationOptions.value[6].disabled = true;
+  }
+  else if (value == 5) {
+    isOptimizationOptions.value[5].disabled = false;
+    isOptimizationOptions.value[6].disabled = true;
+  }
+  else if (value == 6) {
+    isOptimizationOptions.value[5].disabled = true;
+    isOptimizationOptions.value[6].disabled = false;
   }
   else {
-    isOptimizationOptions.value[4].disabled = false;
+    isOptimizationOptions.value[5].disabled = false;
+    isOptimizationOptions.value[6].disabled = false;
   };
   tableData.value = [];
 }
 
+// 更新图数据
+const updateFigure = (dayValue: number) => {
+  dayChoiceSlider.value = dayValue;
+  let dataRange = dayOrWeek.value ? 24 * 7 : 24;
+  // let dataRange2 = dayOrWeek.value ? Array.from({ length: 24 * 7 }, (_, i) => { return `第${toInteger(i / 24)}天 ${i % 24}` }) : range(0, 24);
+  let dataRange2 = dayOrWeek.value ? range(0, 24 * 7) : range(0, 24);
 
-
-// 更新表格数据
-const updateFigure = () => {
-  lineOptions.value.xAxis = {
-    type: 'value',
+  // 环境图数据
+  envFigureOptions.value.xAxis = {
+    type: 'category',
+    data: dataRange2,
     name: '小时数',
     axisLabel: {
       formatter: '{value} h'
     }
   };
-	lineOptions.value.yAxis = {
-    type: 'value',
-    name: '储氢量',
-    axisPointer: {
-      snap: true
+  envFigureOptions.value.legend = {
+    // 设置图例图标的大小
+    textStyle: {
+      fontSize: 20
     },
+    icon: 'circle',
+    itemHeight: 20, // 修改icon图形大小
+    data: Object.keys(envFigureData.value.yAxis)
+  };
+  const envcolors = ["#009ad6","#fcaf17"];
+  envFigureOptions.value.series = Object.keys(envFigureData.value.yAxis).map((key, i) => {
+    return {
+      name: key,
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      yAxisIndex: i,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      // lineStyle: {
+      //   width: 2
+      // },
+      color: envcolors[i],
+      data: envFigureData.value.yAxis[key].slice((dayValue - 1) * dataRange, dayValue * dataRange)
+    }
+  });
+
+  // 小时图数据
+  lineOptions.value.xAxis = {
+    type: 'category',
+    // data: figureData.value.xAxis.slice((dayValue - 1) * dataRange, dayValue * dataRange),
+    data: dataRange2,
+    name: '小时数',
     axisLabel: {
-      formatter: '{value} kg'
+      formatter: '{value} h'
     }
   };
   lineOptions.value.legend = {
-    orient: 'horizontal',
-    right: 'center'
-  };
-	let label;
-  switch (modeChoosed.value) {
-    case 1:
-      label = '储氢量';
-      break;
-  }
-
-  lineOptions.value.series = {
-    name: label,
-    type: 'line',
-    smooth: true,
-    emphasis: {
-      focus: 'series'
+    // 设置图例图标的大小
+    textStyle: {
+      fontSize: 20
     },
-    data: figureData.value.xyAxis
+    icon: 'circle',
+    itemHeight: 20, // 修改icon图形大小
+    data: Object.keys(figureData.value.yAxis)
   };
+  lineOptions.value.series = Object.keys(figureData.value.yAxis).map((key, i) => {
+    return {
+      name: key,
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      lineStyle: {
+        width: 0
+      },
+      color: COLORS[i],
+      data: figureData.value.yAxis[key].slice((dayValue - 1) * dataRange, dayValue * dataRange)
+    }
+  });
 }
 
-
+const updateSwich = (value: boolean) => {
+  dayOrWeek.value = value;
+  updateFigure(dayChoiceSlider.value);
+}
 const message = useMessage();
 
 // 从后端获取数据
 function simulateToServer() {
   isCalculating.value = true;
-  request.post('/simulation_ies_h2', {
-    "inputdata": simulationParamsInput.value,
-    "mode": modeChoosed.value
+  request.post('/simulation_ies_ele', {
+    "inputdata": Object.assign({}, simulationParamsInput.value, { "channelConstraints": powerLineJson.value }),
+    "mode": modeChoosed.value,
   }).then((response) => {
     isCalculating.value = false;
     if (!isNull(response.error)) {
@@ -562,42 +933,62 @@ function simulateToServer() {
     }
     // window.$message.success('仿真成功');
     message.success('计算成功');
-
-		// console.log(response.data)
-
     let backEndData = response.data as BackEndData;
     tableData.value.push(backEndData.table);
-
-		// console.log(backEndData.table)
-
-    tableColumns.value = Object.keys(backEndData.table).map((key) => {
+    tableColumns.value = Object.keys(backEndData.table).map((key, i) => {
       return {
         title: key,
         key: key,
-        width: 80,
+        width: 150,
         resizable: true,
         maxWidth: 200,
+        reader(_: object, index: number) {
+          if (index < 8) {
+            return h('h2', {
+              style: {
+                color: "#38761D"
+              }
+            }, key);
+          }
+          return ""
+        }
       }
     });
-		console.log(tableColumns.value)
-
     figureData.value = backEndData.figure;
-		// console.log(backEndData.figure)
-
-    updateFigure();
+    envFigureData.value = backEndData.envFigure;
+    updateFigure(dayChoiceSlider.value);
   }, (error) => {
     console.log(error);
   });
 };
+
 function optimizeToServer() {
-  isCalculating.value = true;
   let isOptimizationList = Object.values(isOptimizationOptions.value).map((val) => {
+    // 如果选择了该优化参数，则isOptimizationGroup中含有该数值，返回该数值的索引，不存在找不到则返回-1
     return isOptimizationGroup.value.indexOf(val.value) > -1 ? 1 : 0;
   });
-  request.post('/optimization', {
-    "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value }),
+  // let gasCapacity = simulationParamsInput.value["气电参数"]["装机容量（千瓦）"];
+  // let coalCapacity = simulationParamsInput.value["煤电参数"]["装机容量（千瓦）"];
+  // if (gasCapacity + coalCapacity < 8e6 && isOptimizationList[3] == 0 && isOptimizationList[4] == 0) {
+  //   message.error('外送通道约束：气电、煤电总装机容量至少为 8,000,000 kW');
+  //   return;
+  // }
+  isCalculating.value = true;
+  // 不同模式下，优化参数不同，进行筛选
+  if (modeChoosed.value == 4) {
+    isOptimizationList.filter((_, index) => { return index <= 2 });
+  }
+  else if (modeChoosed.value == 5) {
+    isOptimizationList.filter((_, index) => { return index <= 3 });
+  }
+  else if (modeChoosed.value == 6) {
+    isOptimizationList.filter((_, index) => { return index != 3 });
+  }
+
+  request.post('/optimization_ies_ele', {
+    "inputdata": Object.assign({}, simulationParamsInput.value, { "优化时长": optimizationTime.value, "channelConstraints": powerLineJson.value }),
     "mode": modeChoosed.value,
-    "isopt": isOptimizationList
+    "isopt": isOptimizationList,
   }).then((response) => {
     isCalculating.value = false;
     if (!isNull(response.error)) {
@@ -605,23 +996,19 @@ function optimizeToServer() {
       return;
     }
     message.success('计算成功');
-		// console.log(response.data)
     let backEndData = response.data as BackEndData;
     tableData.value.push(backEndData.table);
-
-		// console.log(backEndData.table)
-		// console.log(tableColumns.value)
     tableColumns.value = Object.keys(backEndData.table).map((key) => {
       return {
         title: key,
         key: key,
-        width: 80,
+        width: 150,
         resizable: true,
         maxWidth: 200,
       }
     });
-
     figureData.value = backEndData.figure;
+    envFigureData.value = backEndData.envFigure;
     updateFigure(dayChoiceSlider.value);
   }, (error) => {
     console.log(error);
@@ -657,7 +1044,7 @@ function excelExport() {
 
   //  新建一个工作簿,创建虚拟workbook
   const workbook = XLSX.utils.book_new();
-320
+
   /* 将工作表添加到工作簿,生成xlsx文件(book,sheet数据,sheet命名)*/
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
@@ -667,6 +1054,109 @@ function excelExport() {
 
   return 0;
 };
+
+// 导出json数据函数
+function jsonExport() {
+  // 定义 JSON 数据
+  // 将 JSON 数据转换为字符串，并采用pretty print的格式展示
+  const json = JSON.stringify(powerLineJson.value, null, 2);
+
+  // 创建 Blob 对象
+  const blob = new Blob([json], { type: 'application/json' });
+
+  // 创建 URL
+  const url = URL.createObjectURL(blob);
+
+  // 创建 a 标签
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'data.json';
+
+  // 模拟点击 a 标签
+  link.click();
+
+  // 释放 URL
+  URL.revokeObjectURL(url);
+}
+
+// 更新功率曲线
+function updatePowerLine() {
+  powerlineOptions.value.series = [
+    {
+      name: '冬季曲线',
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: powerLineJson.value.winter.map((val) => {
+        return val / 1e4;
+      })
+    },
+    {
+      name: '夏季曲线',
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: powerLineJson.value.summer.map((val) => {
+        return val / 1e4;
+      })
+    },
+  ]
+}
+
+function updatePowerData() {
+  if (powerLineChoosed.value == 0) {
+    powerLineJson.value.winter[powerMonthChoosed.value - 1] = powerInput.value * 1e4;
+  }
+  else {
+    powerLineJson.value.summer[powerMonthChoosed.value - 1] = powerInput.value * 1e4;
+  }
+  updatePowerLine();
+}
+
+// 导入json数据函数
+function jsonInput() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  // 监听 change 事件
+  input.addEventListener('change', () => {
+    // 检查用户是否选择了文件
+    if (input.files && input.files[0]) {
+      // 获取文件
+      const file = input.files[0];
+      // 创建 FileReader 对象
+      const reader = new FileReader();
+      // 监听 load 事件
+      reader.addEventListener('load', () => {
+        // 获取 JSON 数据
+        const json = reader.result as string;
+        // 处理 JSON 数据
+        powerLineJson.value = JSON.parse(json);
+        updatePowerLine();
+        // ...
+      });
+      // 读取文件
+      reader.readAsText(file);
+    } else {
+      // 用户没有选择文件
+      console.log('用户没有选择文件');
+    }
+  });
+
+  // 模拟点击 input 标签
+  input.click();
+
+}
+
 
 </script>
 

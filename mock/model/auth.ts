@@ -38,26 +38,10 @@ export const userModel: UserModel[] = [
     userRole: 'super',
     password: 'sxy2213722780'
   },
-  {
+	{
     token: '__TOKEN_USER01__',
     refreshToken: '__REFRESH_TOKEN_USER01__',
     userId: '4',
-    userName: 'zbq',
-    userRole: 'super',
-    password: 'zbq2216113096'
-  },
-	{
-    token: '__TOKEN_USER01__',
-    refreshToken: '__REFRESH_TOKEN_USER01__',
-    userId: '5',
-    userName: 'szj',
-    userRole: 'super',
-    password: 'szj2211324610'
-  },
-	{
-    token: '__TOKEN_USER01__',
-    refreshToken: '__REFRESH_TOKEN_USER01__',
-    userId: '6',
     userName: 'cyb',
     userRole: 'super',
     password: 'cyb2215015012'
@@ -65,7 +49,7 @@ export const userModel: UserModel[] = [
 	{
     token: '__TOKEN_USER01__',
     refreshToken: '__REFRESH_TOKEN_USER01__',
-    userId: '7',
+    userId: '5',
     userName: 'yyh',
     userRole: 'super',
     password: 'yyh2223322279'
