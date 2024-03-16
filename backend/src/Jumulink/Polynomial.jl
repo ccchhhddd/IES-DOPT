@@ -77,6 +77,13 @@ function Base.:*(x::Polynomial, y::Polynomial)
 end
 Base.:*(x::Number, y::Polynomial) = Polynomial(x * y.coefficients)
 Base.:*(x::Polynomial, y::Number) = y * x
+function Base.:*(x::Polynomial...)
+	ans = x[1]
+	for p in x[2:end]
+		ans = ans * p
+	end
+	return ans
+end
 
 """
 定义分式

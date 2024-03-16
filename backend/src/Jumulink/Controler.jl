@@ -33,6 +33,11 @@ function pretreatment(input::Dict)
         elseif msg["type"] == "TransFunction"
             push!(link, Tf(order, Fraction(eval(Meta.parse(msg["num"])), eval(Meta.parse(msg["den"])))))
             order += 1
+    		elseif msg["type"] == "ZeroPole"
+      			z = eval(Meta.parse(msg["num"]))
+      			p = eval(Meta.parse(msg["den"]))
+      			push!(link, Tf(order, Fraction(*(map(x->Polynomial([-x,1]),z)...), *(map(x->Polynomial([-x,1]),p)...))))
+      			order += 1
         elseif msg["type"] in ["阶跃输入", "斜坡输入", "抛物线输入"]
             push!(link, Input(order, (x) -> basic_input(msg["type"], Meta.parse(msg["args"]["K"]), Meta.parse(msg["args"]["t"]), x)))
             order += 1

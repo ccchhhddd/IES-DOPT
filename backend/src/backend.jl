@@ -1,4 +1,3 @@
-using Oxygen, HTTP
 import JSON
 
 #using DataFrames
@@ -14,6 +13,7 @@ include("Optimization/function_Electricity.jl")
 include("Optimization/function_Financial.jl")
 include("Optimization/function_Gas.jl")
 include("Optimization/simulate.jl")
+include("Optimization/optimize.jl")
 include("Jumulink/Controler.jl")
 include("function.jl")
 
@@ -42,7 +42,7 @@ end
   # 调用后端模型获得数据
   #table = simulate!(paras["inputdata"], Val(paras["mode"]))
   #println(paras)
-  figure, table = simulate!(paras["inputdata"], Val(paras["mode"]))
+  figure, table = simulate_0!(paras["inputdata"], Val(paras["mode"]))
   #println(figure)
   # 返回数据，匹配前端request要求的格式
   return Dict(
@@ -125,8 +125,38 @@ end
 @post "/simulation_ies_h2" function (req)
   # 将HTTP请求的正文（request body）转换为 Julia 中的字典（Dict）数据结构
   paras = json(req)
+  println(paras)
   # 调用后端模型获得数据
-  figure, table = simulate_h2!(paras["inputdata"], Val(paras["mode"]))
+  figure,figure1,figure2,table = simulate!(paras["inputdata"],paras["area"], Val(paras["mode"]))
+  # 返回数据，匹配前端request要求的格式
+  return Dict(
+    "code" => 200,
+    "message" => "success",
+    "data" => Dict(
+      "table" => OrderedDict(k => (v isa Number ? round(v, digits=4) : v) for (k, v) in table),
+      "figure" => Dict(
+        "xAxis" => collect(1:8760),
+        "yAxis" => figure,
+        ),
+      "envFigure" => Dict(
+        "xAxis" => collect(1:8760),
+        "yAxis" => figure1,
+        ),
+      "H2Figure" => Dict(
+          "xAxis" => collect(1:8760),
+          "yAxis" => figure2,
+          ),
+
+    )
+)
+end
+
+@post "/optimization_ies_h2" function (req)
+  # 将HTTP请求的正文（request body）转换为 Julia 中的字典（Dict）数据结构
+  paras = json(req)
+  println(paras)
+  # 调用后端模型获得数据
+  figure,figure1,figure2,table = optimize!(paras["inputdata"],paras["opt_paras"],paras["isOpt"],paras["area"], Val(paras["mode"]))
   #println(figure)
   # 返回数据，匹配前端request要求的格式
   return Dict(
@@ -136,9 +166,19 @@ end
       # "table" => getTableData(table),
       "table" => OrderedDict(k => round(v, digits=2) for (k, v) in table),
       "figure" => Dict(
-        "xyAxis" => figure,
+        "xAxis" => collect(1:8760),
+        "yAxis" => figure,
+        ),
+      "envFigure" => Dict(
+        "xAxis" => collect(1:8760),
+        "yAxis" => figure1,
+        ),
+      "H2Figure" => Dict(
+          "xAxis" => collect(1:8760),
+          "yAxis" => figure2,
+          ),
+        )
       )
-    ))
 end
 
 @get "/hello" function (req)

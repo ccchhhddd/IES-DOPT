@@ -25,6 +25,9 @@ const msg = ref({
 		t: '0'
 	}
 })
+if (simArgs.value.nodes.has(props.id)) {
+	msg.value = simArgs.value.nodes.get(props.id)
+}
 simArgs.value.nodes.set(props.id, msg.value)
 const value = ref('阶跃输入')
 const options = [
@@ -51,10 +54,10 @@ function CallBack() {
 <template>
 	<NButton @dblclick="show = true" class="sys-input">
 		<p><strong>系统输入</strong></p>
-		<Handle 
-			id="a" 
-			type="source" 
-			:position="Position.Right" 
+		<Handle
+			id="a"
+			type="source"
+			:position="Position.Right"
 			:is-valid-connection="(conn) => Func(conn, nodes)"
 			:style="{
 				backgroundColor: 'blue',
