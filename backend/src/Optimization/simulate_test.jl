@@ -99,6 +99,6 @@ paras = Dict("inputdata" => Dict(
 ),
              "mode" => 1,
              "area" => 1,)
-figure,figure1,table = simulate!(paras["inputdata"], paras["area"],Val(paras["mode"]))
+figure,figure1,figure2,table = simulate!(paras["inputdata"], paras["area"],Val(paras["mode"]))
 
 println(table)

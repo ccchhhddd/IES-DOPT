@@ -111,5 +111,5 @@ paras = Dict("inputdata" => Dict(
 # 2.氢气产能最大、
 # 3.总投资成本最低
 # 等作为优化目标，计算得出多元系统各要素的最佳配置比例。
-figure,figure1,table = optimize!(paras["inputdata"],paras["opt_paras"],paras["isOpt"], paras["area"],Val(paras["mode"]))
+figure,figure1,figure2,table = optimize!(paras["inputdata"],paras["opt_paras"],paras["isOpt"], paras["area"],Val(paras["mode"]))
 println(table)

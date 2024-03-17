@@ -303,3 +303,4 @@ global slo_dict = Dict(
     "simultaneous_perturbation_stochastic_approximation" => :simultaneous_perturbation_stochastic_approximation,
     "adaptive_de_rand_1_bin" => :adaptive_de_rand_1_bin
     )
+

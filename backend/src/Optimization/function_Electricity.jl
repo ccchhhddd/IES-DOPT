@@ -52,7 +52,7 @@ function outputElectricity(pv::Photovoltaic)
     pv_Ele = zeros(Float64,Number_hours)
     pv.actual_T = zeros(Float64,Number_hours)
     pv.actual_T = @.pv.input_Ta+pv.λ * pv.input_GI
-    pv_Ele = @.pv.machine_number * pv.A * pv.input_GI/6.83/100 * (1 + 0.004*(pv.actual_T+pv.input_Ta))
+    pv_Ele = @.pv.machine_number * pv.A * pv.input_GI/6.83/1000 * (1 + 0.004*(pv.actual_T+pv.input_Ta))
     pv_Ele = @.min.(pv_Ele,pv.capacity)
     return pv_Ele
 end
