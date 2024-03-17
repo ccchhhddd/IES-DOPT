@@ -117,7 +117,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
     end
 
     # 根据 op.select_slo 的值获取相应的优化算法
-    sol = get(slo_dict, op.select_slo)
+    sol = get(slo_dict, op.select_slo,nothing)
 
 
     #调用优化求解器
@@ -191,7 +191,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
     end
 
     # 根据 op.select_slo 的值获取相应的优化算法
-    sol = get(slo_dict, op.select_slo)
+    sol = get(slo_dict, op.select_slo,nothing)
 
     #调用优化求解器
     res = bboptimize(obj; SearchRange=(1.0e3, 1.0e4),

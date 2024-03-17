@@ -6,7 +6,7 @@
     <!-- 模式选择-->
     <n-grid-item span="0:24 640:24 1024:12">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <p class="text-16px font-bold inline-block">模式选择</p>
+        <p class="text-16px font-bold inline-block">场景选择</p>
         <p class="text-16px text-red inline-block">*</p>
         <!-- 在文字后面显示下拉框 -->
         <n-select
@@ -686,7 +686,7 @@ const lineOptions1 = ref<ECOption>({
   yAxis: [
     {
       type: 'value',
-      name: '功率/万kW',
+      name: 'kg',
       axisLabel: {
         formatter: '{value}'
       }
