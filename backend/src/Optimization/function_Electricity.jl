@@ -5,16 +5,16 @@
 
 #能源装置中发电和耗电相关的函数
 """
-- 1号组件:风力发电 
+- 1号组件:风力发电
 - 'wt' 风机设备
 - 返回在一定的风速下风机的发电量 'wt_Ele'
 - 单位时间 1h
 - 输出功率:统一单位  1kwh
-- 风机发电量的计算公式： 
+- 风机发电量的计算公式：
 
-- 环境风速大于截止风速或小于切入风速 
-- 输出功率 = 0 
-- 环境风速大于等于切入风速 同时 小于等于切出风速 
+- 环境风速大于截止风速或小于切入风速
+- 输出功率 = 0
+- 环境风速大于等于切入风速 同时 小于等于切出风速
 - 输出功率 = 装机容量*发电机效率*风轮传动效率*采样时间*(环境风速-切入风速)/(切出风速-环境风速）*3600/1000
 - 环境风速大于切出风速 同时 小于截止风速
 - 输出功率 = 装机容量*发电机效率*风轮传动效率*采样时间*(截止风速-环境风速)/（环境风速-切出速度）*3600/1000
@@ -38,7 +38,7 @@ function outputElectricity(wt::WindTurbine)
 end
 
 """
-- 2号组件:光伏发电 
+- 2号组件:光伏发电
 - 'pv' 光伏设备
 - 返回在一定光照强度和环境温度下光伏板的发电量 'pv_Ele'
 - 光伏输出电量的计算公式(光伏板发电量<=总装机容量)
@@ -52,7 +52,7 @@ function outputElectricity(pv::Photovoltaic)
     pv_Ele = zeros(Float64,Number_hours)
     pv.actual_T = zeros(Float64,Number_hours)
     pv.actual_T = @.pv.input_Ta+pv.λ * pv.input_GI
-    pv_Ele = @.pv.machine_number * pv.A * pv.input_GI/6.83/1000 * (1 + 0.004*(pv.actual_T+pv.input_Ta))
+    pv_Ele = @.pv.machine_number * pv.A * pv.input_GI/6.83/100 * (1 + 0.004*(pv.actual_T+pv.input_Ta))
     pv_Ele = @.min.(pv_Ele,pv.capacity)
     return pv_Ele
 end
@@ -63,8 +63,8 @@ end
 统一单位:1kwh
 """
 function outputElectricity(gt::GasTurbine)
-    Number_hours = length(gt.outputpower) 
-    gt.outputpower = zeros(Float64,Number_hours) 
+    Number_hours = length(gt.outputpower)
+    gt.outputpower = zeros(Float64,Number_hours)
     gt.outputpower[1] = gt.capacity*gt.load_min*gt.η
 return gt.outputpower
 end

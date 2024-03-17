@@ -787,6 +787,14 @@ const envFigureOptions = ref<ECOption>({
     }
   },
   yAxis: [
+	{
+      type: 'value',
+      position: 'right',
+      name: '风速 / m/s',
+      axisLabel: {
+        formatter: '{value}'
+      }
+    },
     {
       type: 'value',
       position: 'left',
@@ -795,17 +803,23 @@ const envFigureOptions = ref<ECOption>({
         formatter: '{value}'
       }
     },
-    {
-      type: 'value',
-      position: 'right',
-      name: '风速 / m/s',
-      axisLabel: {
-        formatter: '{value}'
-      }
-    },
+
 
   ],
   series: [
+	{
+      name: '风速',
+      type: 'line',
+      smooth: true,
+      showSymbol: false,
+      yAxisIndex: 1,
+      // stack: 'Total',
+      // areaStyle: {},
+      emphasis: {
+        focus: 'series'
+      },
+      data: [2208, 2016, 2916, 4512, 8281, 2008, 1963, 2367, 2956, 678]
+    },
     {
       name: '辐射强度',
       type: 'line',
@@ -819,19 +833,6 @@ const envFigureOptions = ref<ECOption>({
       },
       data: [4623, 6145, 6268, 6411, 1890, 4251, 2978, 3880, 3606, 4311]
     },
-    {
-      name: '风速',
-      type: 'line',
-      smooth: true,
-      showSymbol: false,
-      yAxisIndex: 1,
-      // stack: 'Total',
-      // areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [2208, 2016, 2916, 4512, 8281, 2008, 1963, 2367, 2956, 678]
-    }
   ]
 }) as Ref<ECOption>;
 const { domRef: envFigureRef } = useEcharts(envFigureOptions);
@@ -870,9 +871,9 @@ const simulationParamsInput = ref({
       '更换成本(元/kw)': 4800,
       风轮传动效率: 0.96,
       发电机效率: 0.93,
-      '风速切入速度(m/s)': 10,
-      '风速切出速度(m/s)': 135,
-      '截止风速速度(m/s)': 150
+      '风速切入速度(m/s)': 15,
+      '风速切出速度(m/s)': 30,
+      '截止风速速度(m/s)': 60
     },
     2: {
       机组数量: 2500,
@@ -884,8 +885,8 @@ const simulationParamsInput = ref({
       风轮传动效率: 0.9,
       发电机效率: 0.97,
       '风速切入速度(m/s)': 15,
-      '风速切出速度(m/s)': 150,
-      '截止风速速度(m/s)': 175
+      '风速切出速度(m/s)': 30,
+      '截止风速速度(m/s)': 60
     }
   },
   光电参数: {
@@ -913,7 +914,7 @@ const simulationParamsInput = ref({
   气电参数: {
     1: {
       机组数量: 5,
-      '单机容量(kw)': 6.5e6,
+      '单机容量(kw)': 6.5e3,
       '使用年限(年)': 15,
       '初始成本(元/kw)': 4800,
       '年运维成本(元/kw)': 160,
@@ -924,7 +925,7 @@ const simulationParamsInput = ref({
     },
     2: {
       机组数量: 5,
-      '单机容量(kw)': 8.0e6,
+      '单机容量(kw)': 8.0e3,
       '使用年限(年)': 20,
       '初始成本(元/kw)': 5000,
       '年运维成本(元/kw)': 250,
@@ -1014,7 +1015,7 @@ const simulationParamsInput = ref({
   },
   储氢罐参数: {
     1: {
-      机组数量: 10,
+      机组数量: 30,
       '单机容量(kg)': 5000,
       '使用年限(年)': 15,
       '初始成本(元/kg)': 2300,
@@ -1022,7 +1023,7 @@ const simulationParamsInput = ref({
       '更换成本(元/kg)': 2300
     },
     2: {
-      机组数量: 10,
+      机组数量: 30,
       '单机容量(kg)': 7000,
       '使用年限(年)': 20,
       '初始成本(元/kg)': 3000,
@@ -1031,7 +1032,7 @@ const simulationParamsInput = ref({
     }
   },
   经济性分析参数: {
-    运行天数: 7,
+    运行天数: 3650,
     '氢气生产用水成本(元/kg)': 0.021,
     '氢气销售价格(元/kg)': 25.58,
     '天然气价格(元/Nm³)': 1.7,
@@ -1065,8 +1066,8 @@ const optParamsInput = ref({
       风轮传动效率: 0.9,
       发电机效率: 0.97,
       '风速切入速度(m/s)': 15,
-      '风速切出速度(m/s)': 150,
-      '截止风速速度(m/s)': 175
+      '风速切出速度(m/s)': 25,
+      '截止风速速度(m/s)': 30
     }
   },
   光电参数: {
@@ -1094,7 +1095,7 @@ const optParamsInput = ref({
   气电参数: {
     1: {
       机组数量: 5,
-      '单机容量(kw)': 6.5e6,
+      '单机容量(kw)': 6.5e3,
       '使用年限(年)': 15,
       '初始成本(元/kw)': 4800,
       '年运维成本(元/kw)': 160,
@@ -1105,7 +1106,7 @@ const optParamsInput = ref({
     },
     2: {
       机组数量: 5,
-      '单机容量(kw)': 8.0e6,
+      '单机容量(kw)': 8.0e3,
       '使用年限(年)': 20,
       '初始成本(元/kw)': 5000,
       '年运维成本(元/kw)': 250,
@@ -1195,7 +1196,7 @@ const optParamsInput = ref({
   },
   储氢罐参数: {
     1: {
-      机组数量: 10,
+      机组数量: 30,
       '单机容量(kg)': 5000,
       '使用年限(年)': 15,
       '初始成本(元/kg)': 2300,
@@ -1203,7 +1204,7 @@ const optParamsInput = ref({
       '更换成本(元/kg)': 2300
     },
     2: {
-      机组数量: 10,
+      机组数量: 30,
       '单机容量(kg)': 7000,
       '使用年限(年)': 20,
       '初始成本(元/kg)': 3000,
@@ -1212,7 +1213,7 @@ const optParamsInput = ref({
     }
   },
   经济性分析参数: {
-    运行天数: 360,
+    运行天数: 3650,
     '氢气生产成本(元/kg)': 0.021,
     '氢气销售价格(元/kg)': 25.58,
     '氢气单次运输费用(元/次)': 1e5,

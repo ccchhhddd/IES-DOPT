@@ -23,7 +23,7 @@ const CORS_HEADERS = [
   "Access-Control-Allow-Headers" => "*",
   "Access-Control-Allow-Methods" => "POST, GET, OPTIONS"
 ]
-
+``
 function CorsMiddleware(handler)
   return function (req::HTTP.Request)
     # println("CORS middleware")
