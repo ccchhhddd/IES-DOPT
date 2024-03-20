@@ -264,8 +264,8 @@ end
 - `cost_unit_transport`:氢气单次运输费用,元/次
 - `H2price_sale`: 氢气销售价格,元/kg
 - `price_gas_per_Nm3`: 天然气价格,元/Nm³
-- `investment`:投资金额,元
-- `H2production`:制氢量,kg
+- `investment`:最大投资金额,元
+- `H2production`:目标最小制氢量,kg
 - ``
 
 """

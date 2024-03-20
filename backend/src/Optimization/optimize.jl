@@ -318,12 +318,12 @@ function optimize!(paras, opt_paras, isOpt ,area::Int64, ::Val{1})
                     )
     fin = Financial(  
                     day = paras["经济性分析参数"]["运行天数"],
-                    cost_water_per_kg_H2 = paras["经济性分析参数"]["氢气生产成本(元/kg)"],
+                    cost_water_per_kg_H2 = paras["经济性分析参数"]["氢气生产用水成本(元/kg)"],
                     H2price_sale = paras["经济性分析参数"]["氢气销售价格(元/kg)"],
                     price_gas_per_Nm3 = paras["经济性分析参数"]["天然气价格(元/Nm³)"],
-                    cost_unit_transport = paras["经济性分析参数"]["氢气单次运输费用(元/次)"],
-                    investment = paras["经济性分析参数"]["投资金额(元)"],
-                    H2production = paras["经济性分析参数"]["制氢量(kg)"]
+                    cost_unit_transport = paras["经济性分析参数"]["单次运输氢气费用(元/次)"],
+                    investment = paras["经济性分析参数"]["最大投资金额(元)"],
+                    H2production = paras["经济性分析参数"]["目标最小制氢量(kg)"]
                     )
     op = OptimizeParas(
                     select_obj = opt_paras["select_obj"],

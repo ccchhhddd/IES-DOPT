@@ -69,7 +69,7 @@ function simulate!(machines::Tuple,fin::Financial)
                 "储氢罐总装机容量(kg)" => hs.capacity,
                 "每方氢气的成本(元/m³)" => cost_H2,
                 "总成本(元)" => cost_total,
-                "制氢量(kg)"=> hydrogen_M[end])
+                "目标最小制氢量(kg)"=> hydrogen_M[end])
 
 	figure = figureDictData(wt_power, pv_power, gt_power)
     figure2 = figureDictData2(H2_unit)
@@ -176,10 +176,10 @@ function simulate!(paras, area, ::Val{1})
                     )
     fin = Financial(  
                     day = paras["经济性分析参数"]["运行天数"],
-                    cost_water_per_kg_H2 = paras["经济性分析参数"]["氢气生产成本(元/kg)"],
+                    cost_water_per_kg_H2 = paras["经济性分析参数"]["氢气生产用水成本(元/kg)"],
                     H2price_sale = paras["经济性分析参数"]["氢气销售价格(元/kg)"],
                     price_gas_per_Nm3 = paras["经济性分析参数"]["天然气价格(元/Nm³)"],
-                    cost_unit_transport = paras["经济性分析参数"]["氢气单次运输费用(元/次)"],
+                    cost_unit_transport = paras["经济性分析参数"]["单次运输氢气费用(元/次)"],
                     )
     machines = (wt,pv,gt,iv,ca_es,ec,hc,hs)
     figure,figure2,table = simulate!(machines,fin)
