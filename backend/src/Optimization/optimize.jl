@@ -22,7 +22,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
         water = hydrogen_M[end]*9
         #计算用天然气总量=(燃烧的天然气量=天然气发电量*3600/发电效率/天然气低位发热值) Nm³
         natural_gas = sum_gt_Ele*3600/gt.η/(gt.lhv_gas*1000)
-        
+
         #计算各设备的成本
         cost_wt= totalCost(wt,fin)
         cost_pv= totalCost(pv,fin)
@@ -41,7 +41,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
         hydrogen_final_V = hydrogen_M[end] /2*22.4
         #计算总成本 = 水成本 + 天然气成本 + 设备成本(投资+运维+更换)
         cost_total = costWater(water,fin)+costGas(natural_gas,fin)+costH2Transport(hydrogen_M[end],hs,fin)+machine_cost
-        
+
         #计算单位氢气成本
         cost_H2 = costH2(hydrogen_final_V,cost_total)
 
@@ -62,7 +62,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
     println("优化变量结果： $candidate", "目标值： $fitness")
     machines = matchOptVars((wt,pv,gt,iv,ca_es,ec,hc,hs), isOpt, candidate)
     add_table(wt,pv,gt,iv,ca_es,ec,hc,hs, isOpt, candidate)
-    
+
     # 返回最优解的仿真结果
     figure,figure2,table = simulate!((machines..., 0), fin)
     return figure,figure2,table
@@ -83,7 +83,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
         water = hydrogen_M[end]*9
         #计算用天然气总量=(燃烧的天然气量=天然气发电量*3600/发电效率/天然气低位发热值) Nm³
         natural_gas = sum_gt_Ele*3600/gt.η/(gt.lhv_gas*1000)
-        
+
         #计算各设备的成本
         cost_wt= totalCost(wt,fin)
         cost_pv= totalCost(pv,fin)
@@ -102,7 +102,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
         hydrogen_final_V = hydrogen_M[end] /2*22.4
         #计算总成本 = 水成本 + 天然气成本 + 设备成本(投资+运维+更换)
         cost_total = costWater(water,fin)+costGas(natural_gas,fin)+costH2Transport(hydrogen_M[end],hs,fin)+machine_cost
-        
+
         #计算单位氢气成本
         cost_H2 = costH2(hydrogen_final_V,cost_total)
 
@@ -135,7 +135,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
 
     machines = matchOptVars((wt,pv,gt,iv,ca_es,ec,hc,hs), isOpt, candidate)
     add_table(wt,pv,gt,iv,ca_es,ec,hc,hs, isOpt, candidate)
-    
+
     # 返回最优解的仿真结果
     figure,figure2,table = simulate!((machines..., 0), fin)
     return figure,figure2,table
@@ -156,7 +156,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
         water = hydrogen_M[end]*9
         #计算用天然气总量=(燃烧的天然气量=天然气发电量*3600/发电效率/天然气低位发热值) Nm³
         natural_gas = sum_gt_Ele*3600/gt.η/(gt.lhv_gas*1000)
-        
+
         #计算各设备的成本
         cost_wt= totalCost(wt,fin)
         cost_pv= totalCost(pv,fin)
@@ -175,7 +175,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
         hydrogen_final_V = hydrogen_M[end] /2*22.4
         #计算总成本 = 水成本 + 天然气成本 + 设备成本(投资+运维+更换)
         cost_total = costWater(water,fin)+costGas(natural_gas,fin)+costH2Transport(hydrogen_M[end],hs,fin)+machine_cost
-        
+
 
         #如果氢气少于需求量，总成本返回一个很大值
         if hydrogen_M[end] < fin.H2production
@@ -205,7 +205,7 @@ function optimization!(machines::Tuple, isOpt, fin::Financial,op::OptimizeParas,
 
     machines = matchOptVars((wt,pv,gt,iv,ca_es,ec,hc,hs), isOpt, candidate)
     add_table(wt,pv,gt,iv,ca_es,ec,hc,hs, isOpt, candidate)
-    
+
     # 返回最优解的仿真结果
     figure,figure2,table = simulate!((machines..., 0), fin)
 
@@ -221,17 +221,17 @@ function optimize!(paras, opt_paras, isOpt ,area::Int64, ::Val{1})
     day = paras["经济性分析参数"]["运行天数"]
     ΔT = [1.0 for i in 1:24* day  ]
     if area == 1
-        data_weather = CSV.File("src/data/weather_Yulin_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
-        data_weather0 = CSV.File("src/data/weather_Yulin_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather = CSV.File("src/Optimization/data/weather_Yulin_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather0 = CSV.File("src/Optimization/data/weather_Yulin_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
     elseif area == 2
-        data_weather = CSV.File("src/data/weather_Ruoqiang_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
-        data_weather0 = CSV.File("src/data/weather_Ruoqiang_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather = CSV.File("src/Optimization/data/weather_Ruoqiang_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather0 = CSV.File("src/Optimization/data/weather_Ruoqiang_2005.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
     elseif area == 3
-        data_weather = CSV.File("src/data/weather_Lenghu_2018.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
-        data_weather0 = CSV.File("src/data/weather_Lenghu_2018.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather = CSV.File("src/Optimization/data/weather_Lenghu_2018.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather0 = CSV.File("src/Optimization/data/weather_Lenghu_2018.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
     elseif area == 4
-        data_weather = CSV.File("src/data/weather_Haixi_Delingha_2021.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
-        data_weather0 = CSV.File("src/data/weather_Haixi_Delingha_2021.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather = CSV.File("src/Optimization/data/weather_Haixi_Delingha_2021.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
+        data_weather0 = CSV.File("src/Optimization/data/weather_Haixi_Delingha_2021.CSV"; select=["glob_hor_rad", "DBT", "wind_speed"])|> DataFrame
     end
     for i in 1:floor(day/365)
         data_weather = vcat(data_weather, data_weather0)
@@ -316,7 +316,7 @@ function optimize!(paras, opt_paras, isOpt ,area::Int64, ::Val{1})
                     cost_OM = paras["储氢罐参数"]["年运维成本(元/kg)"],
                     cost_replace = paras["储氢罐参数"]["更换成本(元/kg)"]
                     )
-    fin = Financial(  
+    fin = Financial(
                     day = paras["经济性分析参数"]["运行天数"],
                     cost_water_per_kg_H2 = paras["经济性分析参数"]["氢气生产用水成本(元/kg)"],
                     H2price_sale = paras["经济性分析参数"]["氢气销售价格(元/kg)"],
@@ -331,20 +331,14 @@ function optimize!(paras, opt_paras, isOpt ,area::Int64, ::Val{1})
                     )
     machines = (wt,pv,gt,iv,ca_es,ec,hc,hs)
     isOpt = isOpt[1:8]
-    if opt_paras["select_obj"] == 1
-        figure,figure2,table = optimization!(machines,isOpt,fin,op,Val(1))
-    elseif opt_paras["select_obj"] == 2
-        figure,figure2,table = optimization!(machines,isOpt,fin,op,Val(2))
-    elseif opt_paras["select_obj"] == 3
-        figure,figure2,table = optimization!(machines,isOpt,fin,op,Val(3))
-    end
+		figure,figure2,table = optimization!(machines,isOpt,fin,op,Val(opt_paras["select_obj"]))
     figure1 =OrderedDict(
         "风速" => WS,
         "辐射强度" => GI,
     )
-    
+
     return figure,figure1,figure2,table
-end   
+end
 
 
 

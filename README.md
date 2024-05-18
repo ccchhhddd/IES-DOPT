@@ -1,10 +1,38 @@
 # IES-DOPT 综合能源仿真优化平台开发项目
 
-## 本项目所使用使用前端框架
+## 项目前端技术
 
-[![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+### Vue3框架
 
-- [Soybean Admin](https://github.com/honghuangdc/soybean-admin) 是一个基于 Vue3、Vite3、TypeScript、NaiveUI、Pinia 和 UnoCSS 的清新优雅的中后台模版，它使用了最新流行的前端技术栈，内置丰富的主题配置，有着极高的代码规范，基于文件的路由系统以及基于 Mock 的动态权限路由，开箱即用的中后台前端解决方案，也可用于学习参考。
+![img](asstes/vue.png)
+
+采用[vue3](https://vuejs.org/)技术。Vue是一种用于构建用户界面的渐进式JavaScript框架，功能强大且易于使用，且适用于构建交互性的Web界面。不同于完全成熟的应用框架，Vue是由底层到全栈的解决方案中逐层选用的，并提供了一套声明式的、组件化的编程模型，能够高效地开发用户界面。
+
+### Soybean Admin 模版
+
+![img](asstes/前端模版.png)
+
+[Soybean Admin](https://github.com/honghuangdc/soybean-admin) 是一个基于 Vue3、Vite3、TypeScript、NaiveUI、Pinia 和 UnoCSS 的清新优雅的中后台模版，它使用了最新流行的前端技术栈，内置丰富的主题配置，有着极高的代码规范，基于文件的路由系统以及基于 Mock 的动态权限路由，开箱即用的中后台前端解决方案，也可用于学习参考。
+
+
+
+## 项目后端技术
+
+### Julia语言
+
+![img](asstes/julia.png)
+
+[Julia](https://julialang.org/)是一门灵活的动态语言，适合用于科学计算和数值计算，并且性能可以与传统的静态类型语言媲美。它拥有着与C语言相似的高效运行速度以及类似 Ruby 的灵活动态特性，并且能够像R语言一样适用于各种统计分析场景，还如同Matlab一样能够对矩阵运算进行高效便捷的处理等，执行速度远远快于解释型语言Python。Julia 语言在设计之初就针对高性能计算等应用场景进行了深度思考，此外还结合动态类型推导、即时编译等技术，使得运算性能超过了其他动态语言。
+
+
+
+## 前后端交互
+
+整体采用前后端分离式的云计算架构。前端为Web界面，采用渐进式JavaScript框架Vue3构建交互与展示；后端为集仿真模块、优化模块，采用新一代开源科学计算编程语言Julia开展仿真和优化计算。前后端交互，实现数据可视化。在这种模式下，前端通过发送 HTTP 请求到后端，后端收到请求后进行数据处理运算，并返回相应的数据给前端。最终，前端对返回的数据进行渲染，生成相应的图表和动效，形式上大大提高了软件开发的灵活性，允许前端和后端团队在独立的环境中并行开发，彼此之间不会产生太多的依赖和耦合。这样可以加快开发速度，并且允许团队成员专注于自己擅长的领域。同时，前后端分离的形式使得部署和维护变得更加简单和灵活，也有助于降低系统的复杂性和维护成本。
+
+![img](asstes/前后端交互.png)
+
+
 
 
 
@@ -117,7 +145,7 @@ npm run dev ——————运行程序
 activate.
 ```
 
-运行后端（文件路径:   backend\main.jl）
+运行后端（文件路径:   backend\src\main.jl）
 
 ```
 include('main.jl')
@@ -137,4 +165,23 @@ Pkg.add()
 
 初次进行运算时间会略长，请耐心等待
 
+
+
+
+
+## 项目过程
+
+本项目起源于西安交通大学2023年大创项目，同时也在[Ai4Energy](https://github.com/ai4energy)开源组织的大力支持下才有了这样的成果。
+
+### 项目第一期时间段:   2023.3——2024.5
+
+在该时间段中共完成了平台版本从v.1.0到v.2.1的[版本迭代](https://github.com/ccchhhddd/IES-DOPT/releases)。
+
+#### 技术管理
+
+采用[git](https://git-scm.com/)版本控制工具，以及[Gitkraken](https://www.gitkraken.com/)版本控制图形化神器
+
+#### 团队管理
+
+利用[飞书](https://www.feishu.cn/)软件进行团队管理，例如建立甘特图、时间进度表、思维导图等
 
