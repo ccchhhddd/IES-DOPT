@@ -1,35 +1,32 @@
 # IES-Backend-BlockBox
+
 ## 用黑箱优化方法写的综合能源系统后端先放在该库中，测试好后移至总库。
 
-
 ## 系统结构图
+
 ![image-20240204155411601](/离网制氢系统结构图.jpg)
 
+## 注：
 
-
-##  注：
-
-1.发电、耗电、负荷均以1小时为单位时间（采样时间）
+1.发电、耗电、负荷均以 1 小时为单位时间（采样时间）
 
 2.设计优化————宏观层面上的设计，不用把单位时间精确到秒，小时的量级即可
 
-3.统一一下  电力能量单位：1kwh    气体能量(质量)单位：kg
+3.统一一下 电力能量单位：1kwh 气体能量(质量)单位：kg
 
 4.目前版本不考虑燃料电池的情况，因为可能会与燃气轮机补电这一块的时间线发生冲突，较复杂，且会对系统的稳定性和最终产氢量产生不小的冲击。
 
-
-
 ## 文件夹说明如下:
 
-* `backend`：后端API文件。
-* `function_Electricity.jl`：能源装置中发电和耗电相关的函数。
-* `function_Financial.jl`：经济分析文件，包含了经济分析的函数。
-* `function_Gas.jl`：产氢、用气过程中的函数。
-* `function.jl`：其他函数补充文件。
-* `optimize_test.jl`：后端优化自测试文件。
-* `optimize.jl`：优化文件，包含了优化的所有函数。
-* `simulate_test.jl`：后端仿真自测试文件。
-* `simulate.jl`：仿真文件，包含了仿真的所有函数。
-* `structs.jl`：结构体文件，包含了各个设备的结构体类型。
+- `backend`：后端 API 文件。
+- `function_Electricity.jl`：能源装置中发电和耗电相关的函数。
+- `function_Financial.jl`：经济分析文件，包含了经济分析的函数。
+- `function_Gas.jl`：产氢、用气过程中的函数。
+- `function.jl`：其他函数补充文件。
+- `optimize_test.jl`：后端优化自测试文件。
+- `optimize.jl`：优化文件，包含了优化的所有函数。
+- `simulate_test.jl`：后端仿真自测试文件。
+- `simulate.jl`：仿真文件，包含了仿真的所有函数。
+- `structs.jl`：结构体文件，包含了各个设备的结构体类型。
 
-## Step by Step～～～
+## Step by Step ～～～

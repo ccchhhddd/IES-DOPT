@@ -1,18 +1,16 @@
 @import "./transition.css";
 @import "./reset.css";
 
-@import '../../../node_modules/@vue-flow/core/dist/style.css';
-@import '../../../node_modules/@vue-flow/core/dist/theme-default.css';
-@import '../../../node_modules/@vue-flow/controls/dist/style.css';
-@import '../../../node_modules/@vue-flow/minimap/dist/style.css';
+@import "../../../node_modules/@vue-flow/core/dist/style.css";
+@import "../../../node_modules/@vue-flow/core/dist/theme-default.css";
+@import "../../../node_modules/@vue-flow/controls/dist/style.css";
+@import "../../../node_modules/@vue-flow/minimap/dist/style.css";
 
 html,
 body,
 #app {
 	height: 100%;
 }
-
-
 
 .vue-flow__minimap {
 	transform: scale(75%);
@@ -22,7 +20,7 @@ body,
 .dndflow {
 	flex-direction: column;
 	display: flex;
-	height: 100%
+	height: 100%;
 }
 
 .dndflow aside {
@@ -31,26 +29,26 @@ body,
 	border-right: 1px solid #eee;
 	padding: 15px 10px;
 	font-size: 12px;
-	background: rgba(16, 185, 129, .75);
-	-webkit-box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, .3);
-	box-shadow: 0 5px 10px #0000004d
+	background: rgba(16, 185, 129, 0.75);
+	-webkit-box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 5px 10px #0000004d;
 }
 
-.dndflow aside .nodes>* {
+.dndflow aside .nodes > * {
 	margin-bottom: 10px;
 	cursor: grab;
 	font-weight: 500;
-	-webkit-box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, .25);
-	box-shadow: 5px 5px 10px 2px #0c040440
+	-webkit-box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.25);
+	box-shadow: 5px 5px 10px 2px #0c040440;
 }
 
 .dndflow aside .description {
-	margin-bottom: 10px
+	margin-bottom: 10px;
 }
 
 .dndflow .vue-flow-wrapper {
 	flex-grow: 1;
-	height: 100%
+	height: 100%;
 }
 
 .sum-block {
@@ -172,11 +170,11 @@ body,
 
 @media screen and (min-width: 640px) {
 	.dndflow {
-		flex-direction: row
+		flex-direction: row;
 	}
 
 	.dndflow aside {
-		min-width: 25%
+		min-width: 25%;
 	}
 }
 
@@ -184,6 +182,6 @@ body,
 	.dndflow aside .nodes {
 		display: flex;
 		flex-direction: row;
-		gap: 5px
+		gap: 5px;
 	}
 }
