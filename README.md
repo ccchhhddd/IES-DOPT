@@ -2,11 +2,11 @@
 
 ## 项目前端技术
 
-### Vue3框架
+### Vue3 框架
 
 ![img](asstes/vue.png)
 
-采用[vue3](https://vuejs.org/)技术。Vue是一种用于构建用户界面的渐进式JavaScript框架，功能强大且易于使用，且适用于构建交互性的Web界面。不同于完全成熟的应用框架，Vue是由底层到全栈的解决方案中逐层选用的，并提供了一套声明式的、组件化的编程模型，能够高效地开发用户界面。
+采用[vue3](https://vuejs.org/)技术。Vue 是一种用于构建用户界面的渐进式 JavaScript 框架，功能强大且易于使用，且适用于构建交互性的 Web 界面。不同于完全成熟的应用框架，Vue 是由底层到全栈的解决方案中逐层选用的，并提供了一套声明式的、组件化的编程模型，能够高效地开发用户界面。
 
 ### Soybean Admin 模版
 
@@ -14,71 +14,75 @@
 
 [Soybean Admin](https://github.com/honghuangdc/soybean-admin) 是一个基于 Vue3、Vite3、TypeScript、NaiveUI、Pinia 和 UnoCSS 的清新优雅的中后台模版，它使用了最新流行的前端技术栈，内置丰富的主题配置，有着极高的代码规范，基于文件的路由系统以及基于 Mock 的动态权限路由，开箱即用的中后台前端解决方案，也可用于学习参考。
 
-
-
 ## 项目后端技术
 
-### Julia语言
+### Julia 语言
 
 ![img](asstes/julia.png)
 
-[Julia](https://julialang.org/)是一门灵活的动态语言，适合用于科学计算和数值计算，并且性能可以与传统的静态类型语言媲美。它拥有着与C语言相似的高效运行速度以及类似 Ruby 的灵活动态特性，并且能够像R语言一样适用于各种统计分析场景，还如同Matlab一样能够对矩阵运算进行高效便捷的处理等，执行速度远远快于解释型语言Python。Julia 语言在设计之初就针对高性能计算等应用场景进行了深度思考，此外还结合动态类型推导、即时编译等技术，使得运算性能超过了其他动态语言。
-
-
+[Julia](https://julialang.org/)是一门灵活的动态语言，适合用于科学计算和数值计算，并且性能可以与传统的静态类型语言媲美。它拥有着与 C 语言相似的高效运行速度以及类似 Ruby 的灵活动态特性，并且能够像 R 语言一样适用于各种统计分析场景，还如同 Matlab 一样能够对矩阵运算进行高效便捷的处理等，执行速度远远快于解释型语言 Python。Julia 语言在设计之初就针对高性能计算等应用场景进行了深度思考，此外还结合动态类型推导、即时编译等技术，使得运算性能超过了其他动态语言。
 
 ## 前后端交互
 
-整体采用前后端分离式的云计算架构。前端为Web界面，采用渐进式JavaScript框架Vue3构建交互与展示；后端为集仿真模块、优化模块，采用新一代开源科学计算编程语言Julia开展仿真和优化计算。前后端交互，实现数据可视化。在这种模式下，前端通过发送 HTTP 请求到后端，后端收到请求后进行数据处理运算，并返回相应的数据给前端。最终，前端对返回的数据进行渲染，生成相应的图表和动效，形式上大大提高了软件开发的灵活性，允许前端和后端团队在独立的环境中并行开发，彼此之间不会产生太多的依赖和耦合。这样可以加快开发速度，并且允许团队成员专注于自己擅长的领域。同时，前后端分离的形式使得部署和维护变得更加简单和灵活，也有助于降低系统的复杂性和维护成本。
+整体采用前后端分离式的云计算架构。前端为 Web 界面，采用渐进式 JavaScript 框架 Vue3 构建交互与展示；后端为集仿真模块、优化模块，采用新一代开源科学计算编程语言 Julia 开展仿真和优化计算。前后端交互，实现数据可视化。在这种模式下，前端通过发送 HTTP 请求到后端，后端收到请求后进行数据处理运算，并返回相应的数据给前端。最终，前端对返回的数据进行渲染，生成相应的图表和动效，形式上大大提高了软件开发的灵活性，允许前端和后端团队在独立的环境中并行开发，彼此之间不会产生太多的依赖和耦合。这样可以加快开发速度，并且允许团队成员专注于自己擅长的领域。同时，前后端分离的形式使得部署和维护变得更加简单和灵活，也有助于降低系统的复杂性和维护成本。
 
 ![img](asstes/前后端交互.png)
-
-
-
-
 
 ## 部署服务器
 
 ### 前端部署
 
-1.对项目文件进行本地打包生成dist文件夹
+1.对项目文件进行本地打包生成 dist 文件夹
+
 ```
 npm run build
 ```
-2.执行命令运行Dockerfile文件，对采用ngnix服务的前端项目进行docker镜像封装
+
+2.执行命令运行 Dockerfile 文件，对采用 ngnix 服务的前端项目进行 docker 镜像封装
+
 ```
 docker build -t front_end -f .\docker\Dockerfile .
 ```
-3.对生成的docker镜像进行改名操作(dockerhub用户名/镜像名)
+
+3.对生成的 docker 镜像进行改名操作(dockerhub 用户名/镜像名)
+
 ```
 docker tag front_end chenghd/front_end
 ```
-4.将镜像push到远端dockerhub仓库
+
+4.将镜像 push 到远端 dockerhub 仓库
+
 ```
 docker push chenghd/front_end
 ```
+
 5.在服务器端拉取远端镜像
+
 ```
 docker pull chenghd/front_end
 ```
-6.在服务器端运行docker镜像生成docker容器
+
+6.在服务器端运行 docker 镜像生成 docker 容器
+
 ```
 docker run --name front -p 80:80 -d chenghd/front_end
 ```
 
 ### 后端部署
+
 1.在本地打包镜像
 
 ```
 docker build -t backend .
 ```
 
-2.将后端的本地镜像压缩成linux系统可识别的压缩包  .tar
+2.将后端的本地镜像压缩成 linux 系统可识别的压缩包 .tar
 
 ```
 docker save  [image] -o image.tar
 ```
 
-3.将镜像压缩包tar上传至服务器（这里可以使用 mobaxterm终端工具）
+3.将镜像压缩包 tar 上传至服务器（这里可以使用 mobaxterm 终端工具）
 
 https://mobaxterm.mobatek.net/
 
@@ -100,17 +104,18 @@ docker images
 docker run --name [容器名] -p 8080:80 -d [镜像名]
 ```
 
-
-
 ## 使用说明(本地开发者模式)
 
 ### 先将项目克隆到本地
-#### 方法一：使用GitKraken进行项目克隆及项目相关操作（推荐）
-GitKraken使用详情请见 https://ai4energy.github.io/Ai4EDocs/dev/WorkFlow/gitworkflow/
 
-如果你是学生可以使用学校的邮箱注册，学生包有gitkraken的会员 https://education.github.com/pack
+#### 方法一：使用 GitKraken 进行项目克隆及项目相关操作（推荐）
 
-#### 方法二：git命令行手动操作
+GitKraken 使用详情请见 https://ai4energy.github.io/Ai4EDocs/dev/WorkFlow/gitworkflow/
+
+如果你是学生可以使用学校的邮箱注册，学生包有 gitkraken 的会员 https://education.github.com/pack
+
+#### 方法二：git 命令行手动操作
+
 首先创建一个空的文件夹用于存放项目，在创建的文件夹中 右键选择 Git Bash Here
 输入
 
@@ -139,19 +144,19 @@ npm run dev ——————运行程序
 
 ### 后端
 
-运行时建议单独进入backend环境运行进入包管理模式运行如下代码进行环境激活
+运行时建议单独进入 backend 环境运行进入包管理模式运行如下代码进行环境激活
 
 ```
 activate.
 ```
 
-运行后端（文件路径:   backend\src\main.jl）
+运行后端（文件路径: backend\src\main.jl）
 
 ```
 include('main.jl')
 ```
 
-若出现缺包现象，进入julia包管理模式运行如下代码进行自动补全
+若出现缺包现象，进入 julia 包管理模式运行如下代码进行自动补全
 
 ```
 instantiate
@@ -165,17 +170,22 @@ Pkg.add()
 
 初次进行运算时间会略长，请耐心等待
 
+本地编译 markdown 文件到 html 请使用如下命令：
 
+```shell
+julia --project=docs/ -e 'using Pkg; Pkg.update(); Pkg.instantiate()'
+julia --project=docs/ docs/make.jl
+```
 
-
+PS:`./src`中包含了文档中的一些代码与相关资源
 
 ## 项目过程
 
-本项目起源于西安交通大学2023年大创项目，同时也在[Ai4Energy](https://github.com/ai4energy)开源组织的大力支持下才有了这样的成果。
+本项目起源于西安交通大学 2023 年大创项目，同时也在[Ai4Energy](https://github.com/ai4energy)开源组织的大力支持下才有了这样的成果。
 
-### 项目第一期时间段:   2023.3——2024.5
+### 项目第一期时间段: 2023.3——2024.5
 
-在该时间段中共完成了平台版本从v.1.0到v.2.1的[版本迭代](https://github.com/ccchhhddd/IES-DOPT/releases)。
+在该时间段中共完成了平台版本从 v.1.0 到 v.2.1 的[版本迭代](https://github.com/ccchhhddd/IES-DOPT/releases)。
 
 #### 技术管理
 
@@ -184,4 +194,3 @@ Pkg.add()
 #### 团队管理
 
 利用[飞书](https://www.feishu.cn/)软件进行团队管理，例如建立甘特图、时间进度表、思维导图等
-

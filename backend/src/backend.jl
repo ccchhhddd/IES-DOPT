@@ -188,7 +188,7 @@ end
     "data" => "hello world"
   )
 end
-# 本地测试 async=true，服务器上 async=false。同步测试便于调试
-serve(host="0.0.0.0", port=8080, async=true,middleware=[CorsMiddleware])
-# serve(port=8080, async=true)
+# 本地测试 async=false，防止自动关闭服务；服务器上 async=true。同步测试便于调试？
+# serve(host="0.0.0.0", port=8080, async=true,middleware=[CorsMiddleware])
+serve(port=8080, async=false)
 

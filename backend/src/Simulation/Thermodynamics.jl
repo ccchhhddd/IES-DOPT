@@ -4,11 +4,13 @@
     sts = @variables begin
         p(t0) = 1.0e5
         t(t0) = 300.0
-        s(t0) = 1.0e5
+        s(t0) = 1.0e4
 		h(t0) = 1.0e5
     end
     ODESystem(Equation[], t0, sts, []; name=name)
 end
+
+#调整了熵的初始参数，防止超出了 CoolProp 可计算的合理物性范围。，s(t0) = 1.0e5 ——> s(t0) = 1.0e4
 
 function StreamPort(; name)
     @named in = StreamNode()
@@ -16,7 +18,7 @@ function StreamPort(; name)
     sts = @variables begin
         Δp(t0) = 1.0e5
         Δt(t0) = 300.0
-        Δs(t0) = 1.0e5
+        Δs(t0) = 1.0e4
 		Δh(t0) = 1.0e5
     end
     eqs = [
