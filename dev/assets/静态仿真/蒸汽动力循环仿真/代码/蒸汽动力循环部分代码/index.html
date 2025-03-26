@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · 综合能源系统仿真优化平台</title><script data-outdated-warner src="../../../../warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../../documenter.js"></script><script src="../../../../../siteinfo.js"></script><script src="../../../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../../themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../../themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../../themeswap.js"></script><link href="../../../../css/notes.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../../../"><img src="../../../../logo.svg" alt="综合能源系统仿真优化平台 logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../../../">综合能源系统仿真优化平台</a></span></div><form class="docs-search" action="../../../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../../../">主页</a></li><li><span class="tocitem">静态仿真</span><ul><li><a class="tocitem" href="../../../../../Static_simulation/PID控制仿真实验/">PID 控制仿真实验</a></li><li><a class="tocitem" href="../../../../../Static_simulation/文丘里管压力仿真/">文丘里管压力仿真</a></li><li><a class="tocitem" href="../../../../../Static_simulation/蒸汽动力循环仿真/">蒸汽动力循环仿真</a></li><li><a class="tocitem" href="../../../../../Static_simulation/顺流与逆流式换热器仿真/">顺流与逆流式换热器仿真</a></li></ul></li><li><span class="tocitem">动态仿真</span><ul><li><a class="tocitem" href="../../../../../Dynamic_simulation/Jumulink/">Ai4EJumulink</a></li></ul></li><li><span class="tocitem">优化</span><ul><li><a class="tocitem" href="../../../../../Optimization/离网制氢/">离网制氢</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>-</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>-</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/ccchhhddd/IES-DOPT/blob/main/docs/src/assets/静态仿真/蒸汽动力循环仿真/代码/蒸汽动力循环部分代码.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs">function reheat_rankine(冷凝器冷却压力,
+                        水泵供给压力,
+                        锅炉出口温度,
+                        再热器出口温度,
+                        汽轮机一级出口压力,
+						工质)
+
+    冷凝器冷却压力 = 冷凝器冷却压力 isa Number ? 冷凝器冷却压力 : parse(Float64,冷凝器冷却压力)
+    水泵供给压力 = 水泵供给压力 isa Number ? 水泵供给压力 : parse(Float64,水泵供给压力)
+    锅炉出口温度 = 锅炉出口温度 isa Number ? 锅炉出口温度 : parse(Float64,锅炉出口温度)
+    再热器出口温度 = 再热器出口温度 isa Number ? 再热器出口温度 : parse(Float64,再热器出口温度)
+    汽轮机一级出口压力 = 汽轮机一级出口压力 isa Number ? 汽轮机一级出口压力 : parse(Float64,汽轮机一级出口压力)
+
+    #创建组件...
+    @named pump = Pump(P = 水泵供给压力,fluid = 工质)
+    @named boiler = Boiler(T = 锅炉出口温度,fluid = 工质)
+    @named turbine = Turbine(P = 汽轮机一级出口压力,fluid = 工质)
+    @named reboiler = Boiler(T = 再热器出口温度,fluid = 工质)
+    @named returbine = Turbine(P = 冷凝器冷却压力,fluid = 工质)
+    @named condenser = Condenser(fluid = 工质)
+
+    #构建连接关系
+    rc_eqs = [
+      connect(pump.out, boiler.in)
+      connect(boiler.out, turbine.in)
+      connect(turbine.out, reboiler.in)
+      connect(reboiler.out, returbine.in)
+      connect(returbine.out, condenser.in)
+      connect(condenser.out, pump.in)
+      D(x) ~ 0
+    ]
+    @named _rc_model = ODESystem(rc_eqs, t0) #连接关系也需要放到ODESystem中
+
+    # 组件与组件连接关系一起构建系统
+    @named rc_model = compose(_rc_model,[turbine, condenser , pump, boiler,reboiler,returbine ])
+
+    # 系统化简
+    sys = structural_simplify(rc_model)
+    equations(sys) # 查看方程
+    # 求解
+    prob = ODAEProblem(sys, [0], (0, 0.0))
+    sol = solve(prob)
+
+    #println(sol)
+    table = OrderedDict(&quot;汽轮机一级入口压力(pa)&quot; =&gt; sol[turbine.in.p][1],
+    &quot;汽轮机一级入口温度(k)&quot; =&gt; sol[turbine.in.t][1],
+    &quot;汽轮机一级出口温度(k)&quot; =&gt; sol[turbine.out.t][1],
+    &quot;汽轮机一级出口熵(J/(mol*k))&quot; =&gt; sol[turbine.out.s][1],
+    &quot;锅炉入口温度(k)&quot;=&gt; sol[boiler.in.t][1],
+    &quot;锅炉出口压力(pa)&quot;=&gt; sol[boiler.out.p][1],
+    &quot;锅炉入口压力(pa)&quot;=&gt; sol[boiler.in.p][1])
+
+    plot_sys = [pump, boiler, turbine, reboiler, returbine, condenser];
+    propx = :s
+    propy = :t
+
+    ss = [sol[getproperty(i.out, propx)][1] for i in plot_sys]
+    tt = [sol[getproperty(i.out, propy)][1] for i in plot_sys]
+
+    xAxis = collect(range(ss[1], ss[2], 15))
+    yAxis = CoolProp.PropsSI.(&quot;T&quot;, &quot;P&quot;, sol[pump.out.p], &quot;S&quot;, collect(range(ss[1], ss[2], 15)), 工质)
+
+    append!(xAxis, collect(range(ss[2], ss[3], 15)))
+    append!(yAxis,collect(range(tt[2], tt[3], 15)))
+
+    append!(xAxis,collect(range(ss[3], ss[4], 15)))
+    append!(yAxis,CoolProp.PropsSI.(&quot;T&quot;, &quot;P&quot;, sol[reboiler.out.p], &quot;S&quot;, collect(range(ss[3], ss[4], 15)), 工质))
+
+    append!(xAxis,collect(range(ss[4], ss[5], 15)))
+    append!(yAxis,collect(range(tt[4], tt[5], 15)))
+
+    append!(xAxis,collect(range(ss[5], ss[6], 15)))
+    append!(yAxis,collect(range(tt[5], tt[6], 15)))
+
+    append!(xAxis,collect(range(ss[6], ss[1], 15)))
+    append!(yAxis,collect(range(tt[6], tt[1], 15)))
+    # println(xAxis)
+    # println(yAxis)
+    figure = transposeMatrix(xAxis, yAxis)
+    #在本地绘图
+    plot_local(figure)
+    return figure,table
+end</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 26 March 2025 01:41">Wednesday 26 March 2025</span>. Using Julia version 1.11.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

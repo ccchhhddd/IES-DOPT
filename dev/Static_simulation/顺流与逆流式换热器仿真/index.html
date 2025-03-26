@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>顺流与逆流式换热器仿真 · 综合能源系统仿真优化平台</title><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/css/notes.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.svg" alt="综合能源系统仿真优化平台 logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">综合能源系统仿真优化平台</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">主页</a></li><li><span class="tocitem">静态仿真</span><ul><li><a class="tocitem" href="../PID控制仿真实验/">PID 控制仿真实验</a></li><li><a class="tocitem" href="../文丘里管压力仿真/">文丘里管压力仿真</a></li><li><a class="tocitem" href="../蒸汽动力循环仿真/">蒸汽动力循环仿真</a></li><li class="is-active"><a class="tocitem" href>顺流与逆流式换热器仿真</a><ul class="internal"><li><a class="tocitem" href="#简介"><span>简介</span></a></li><li><a class="tocitem" href="#操作演示"><span>操作演示</span></a></li><li><a class="tocitem" href="#顺流逆流换热器系统模型图"><span>顺流逆流换热器系统模型图</span></a></li><li><a class="tocitem" href="#仿真结果图"><span>仿真结果图</span></a></li><li><a class="tocitem" href="#仿真参数输出"><span>仿真参数输出</span></a></li><li><a class="tocitem" href="#部分代码"><span>部分代码</span></a></li></ul></li></ul></li><li><span class="tocitem">动态仿真</span><ul><li><a class="tocitem" href="../../Dynamic_simulation/Jumulink/">Ai4EJumulink</a></li></ul></li><li><span class="tocitem">优化</span><ul><li><a class="tocitem" href="../../Optimization/离网制氢/">离网制氢</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">静态仿真</a></li><li class="is-active"><a href>顺流与逆流式换热器仿真</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>顺流与逆流式换热器仿真</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/ccchhhddd/IES-DOPT/blob/main/docs/src/Static_simulation/顺流与逆流式换热器仿真.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="顺流与逆流式换热器仿真"><a class="docs-heading-anchor" href="#顺流与逆流式换热器仿真">顺流与逆流式换热器仿真</a><a id="顺流与逆流式换热器仿真-1"></a><a class="docs-heading-anchor-permalink" href="#顺流与逆流式换热器仿真" title="Permalink"></a></h1><h2 id="简介"><a class="docs-heading-anchor" href="#简介">简介</a><a id="简介-1"></a><a class="docs-heading-anchor-permalink" href="#简介" title="Permalink"></a></h2><p>该部分支持套管式换热器在顺流与逆流两种流态下的仿真。通过用户输入换热器的长度、介质种类、冷热流入口温度、流量等参数，计算出冷热流体不同位置的温度值以及整体换热效率等信息，用户能更直观地了解到换热器的换热情况，并调整真实模型的相关参数，从而提高换热器效率。此仿真过程将换热原理与 ODE 结合，使模型更精准。</p><h2 id="操作演示"><a class="docs-heading-anchor" href="#操作演示">操作演示</a><a id="操作演示-1"></a><a class="docs-heading-anchor-permalink" href="#操作演示" title="Permalink"></a></h2><p><img src="../../assets/静态仿真/顺流逆流换热器仿真/顺逆流换热器.gif" alt/></p><h2 id="顺流逆流换热器系统模型图"><a class="docs-heading-anchor" href="#顺流逆流换热器系统模型图">顺流逆流换热器系统模型图</a><a id="顺流逆流换热器系统模型图-1"></a><a class="docs-heading-anchor-permalink" href="#顺流逆流换热器系统模型图" title="Permalink"></a></h2><p><img src="../../assets/静态仿真/顺流逆流换热器仿真/顺流换热器系统图.jpg" alt/></p><p><img src="../../assets/静态仿真/顺流逆流换热器仿真/逆流换热器系统图.jpg" alt/></p><p>用户在仿真软件中选择换热器模块，并进入设置界面，从下拉菜单中选择热流体的类型（液态水、空气）并输入相关参数（冷热流体流量、换热管长度等），最后点击软件界面上的开始按钮，启动套管式换热器的仿真过程。</p><h2 id="仿真结果图"><a class="docs-heading-anchor" href="#仿真结果图">仿真结果图</a><a id="仿真结果图-1"></a><a class="docs-heading-anchor-permalink" href="#仿真结果图" title="Permalink"></a></h2><p><img src="../../assets/静态仿真/顺流逆流换热器仿真/顺流逆流换热器T—X图.png" alt/></p><h2 id="仿真参数输出"><a class="docs-heading-anchor" href="#仿真参数输出">仿真参数输出</a><a id="仿真参数输出-1"></a><a class="docs-heading-anchor-permalink" href="#仿真参数输出" title="Permalink"></a></h2><p><img src="../../assets/静态仿真/顺流逆流换热器仿真/参数输出表.png" alt/></p><p>软件将计算并生成热流与冷流的温度随距入口大小变化的 T-X 图以及包含换热效率、热流雷诺数等参数的结果输出表。用户可以通过这些结果图来评估换热器的性能和工作状态。</p><h2 id="部分代码"><a class="docs-heading-anchor" href="#部分代码">部分代码</a><a id="部分代码-1"></a><a class="docs-heading-anchor-permalink" href="#部分代码" title="Permalink"></a></h2><pre><code class="language-julia hljs">function heat_exchanger!(du,u,p,t)
+		#比热容
+		Cp_h = CoolProp.PropsSI(&quot;C&quot;, &quot;T&quot;, u[1], &quot;P&quot;, p[3],p[4])
+		Cp_c = CoolProp.PropsSI(&quot;C&quot;, &quot;T&quot;, u[2], &quot;P&quot;, p[3],p[9])
+		#计算动态粘度
+		μ_h = CoolProp.PropsSI(&quot;V&quot;, &quot;T&quot;, u[1], &quot;P&quot;, p[3], p[4])
+		μ_c = CoolProp.PropsSI(&quot;V&quot;, &quot;T&quot;, u[2], &quot;P&quot;, p[3], p[9])
+
+		#计算普朗特数
+		Pr_h = CoolProp.PropsSI(&quot;Prandtl&quot;, &quot;T&quot;, u[1], &quot;P&quot;, p[3], p[4])
+		Pr_c = CoolProp.PropsSI(&quot;Prandtl&quot;, &quot;T&quot;, u[2], &quot;P&quot;, p[3], p[9])
+
+		#计算雷诺数
+		Re_h = 4*p[1]/p[6]/μ_h/π
+		Re_c = 4*p[2]/p[7]/μ_c/π
+
+		#计算努塞尔数
+		if Re_c &gt; 10000
+			Nu_c = 0.023*(Re_c^0.8)*(Pr_c^0.4)
+		else
+			Nu_c = 4.36
+		end
+		if Re_h &gt; 10000
+			Nu_h = 0.023*(Re_h^0.8)*(Pr_h^0.3)
+		else
+			Nu_h = 4.36
+		end
+
+		#计算传热系数
+		k_h = CoolProp.PropsSI(&quot;L&quot;, &quot;T&quot;, u[1], &quot;P&quot;, p[3], p[4])
+		k_c = CoolProp.PropsSI(&quot;L&quot;, &quot;T&quot;, u[2], &quot;P&quot;, p[3], p[9])
+
+		η_h = Nu_h*k_h/p[6]
+		η_c = Nu_c*k_c/p[7]
+		#计算传热系数U
+		U = (1/η_h+1/η_c)^(-1)
+		#计算热传导方程 [1]为热流 [2]为冷流
+		du[1] = U*π*p[6]*(u[2]-u[1])/(Cp_h*p[1])
+		if Flow_type == &quot;parallel&quot;
+			du[2] = U*π*p[7]*(u[1]-u[2])/(Cp_c*p[2])
+		elseif Flow_type == &quot;countercurrent&quot;
+			du[2] = -U*π*p[7]*(u[1]-u[2])/(Cp_c*p[2])
+		end
+	end</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../蒸汽动力循环仿真/">« 蒸汽动力循环仿真</a><a class="docs-footer-nextpage" href="../../Dynamic_simulation/Jumulink/">Ai4EJumulink »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 26 March 2025 01:41">Wednesday 26 March 2025</span>. Using Julia version 1.11.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

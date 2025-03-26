@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · 综合能源系统仿真优化平台</title><script data-outdated-warner src="../../../../warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../../documenter.js"></script><script src="../../../../../siteinfo.js"></script><script src="../../../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../../themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../../themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../../themeswap.js"></script><link href="../../../../css/notes.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../../../"><img src="../../../../logo.svg" alt="综合能源系统仿真优化平台 logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../../../">综合能源系统仿真优化平台</a></span></div><form class="docs-search" action="../../../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../../../">主页</a></li><li><span class="tocitem">静态仿真</span><ul><li><a class="tocitem" href="../../../../../Static_simulation/PID控制仿真实验/">PID 控制仿真实验</a></li><li><a class="tocitem" href="../../../../../Static_simulation/文丘里管压力仿真/">文丘里管压力仿真</a></li><li><a class="tocitem" href="../../../../../Static_simulation/蒸汽动力循环仿真/">蒸汽动力循环仿真</a></li><li><a class="tocitem" href="../../../../../Static_simulation/顺流与逆流式换热器仿真/">顺流与逆流式换热器仿真</a></li></ul></li><li><span class="tocitem">动态仿真</span><ul><li><a class="tocitem" href="../../../../../Dynamic_simulation/Jumulink/">Ai4EJumulink</a></li></ul></li><li><span class="tocitem">优化</span><ul><li><a class="tocitem" href="../../../../../Optimization/离网制氢/">离网制氢</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>-</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>-</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/ccchhhddd/IES-DOPT/blob/main/docs/src/assets/动态仿真/Ai4EJumulink/代码/jumulink相关代码.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs">&quot;&quot;&quot;
+控制系统方框图,由要素组成和它们的邻接矩阵构成.\n
+使用有向图来储存拓扑关系.\n
+值得注意的是:以列表示起始,以行表示终止,1代表连接,0代表没连接,-1代表和点的负输入
+&quot;&quot;&quot;
+struct SystemMap
+  links::Vector{&lt;:AbstractLink}
+  adjacency_matrix::Matrix{Int8}
+end
+
+&quot;&quot;&quot;
+方框图前向通道
+&quot;&quot;&quot;
+struct ForwardChannel &lt;: AbstractPath
+  value::Int128
+  order::Int64
+  links::Vector{Int16}
+  tf::Union{Nothing,Tfs,Fraction}
+end
+
+&quot;&quot;&quot;
+环路\n
+易知:方框图中,环路总是可以看作从一个和点出发,然后回到该和点,当然一个和点产生的可能不止一个回路
+&quot;&quot;&quot;
+mutable struct ClosedLoop &lt;: AbstractPath
+  value::Int128
+  order::Int64
+  links::Vector{Int16}
+  tf::Union{Fraction,Tfs,Nothing}
+end
+
+&quot;&quot;&quot;
+利用回溯进行寻路
+&quot;&quot;&quot;
+function path_finding(matrix::Matrix, start, stop)
+  # start与stop间全部的路径
+  paths = []
+  # 单条路径的节点栈
+  path = Int16[start]
+  # 前进节点
+  step = start
+  # 所有可能路径节点栈
+  tree = []
+  while true
+    # 当前节点的子节点
+    sons = []
+    for i in eachindex(matrix[step, :])
+      if matrix[step, i] != 0
+        if i in path &amp;&amp; i != start
+          continue
+        end
+        append!(sons, i)
+      end
+    end
+    if isempty(sons)
+      if path[end] == stop
+        push!(paths, copy(path))
+        pop!(path)
+        pop!(tree[end])
+        while isempty(tree[end])
+          pop!(tree)
+          pop!(path)
+          isempty(tree) &amp;&amp; break
+          pop!(tree[end])
+        end
+        isempty(tree) &amp;&amp; break
+        step = tree[end][end]
+        append!(path, step)
+      end
+      pop!(tree[end])
+      pop!(path)
+      while isempty(tree[end])
+        pop!(tree)
+        isempty(tree) &amp;&amp; break
+        pop!(tree[end])
+        pop!(path)
+        isempty(path) &amp;&amp; break
+      end
+      isempty(tree) &amp;&amp; break
+    else
+      push!(tree, sons)
+    end
+    step = tree[end][end]
+    append!(path, step)
+    if path[end] == stop
+      push!(paths, copy(path))
+      pop!(path)
+      pop!(tree[end])
+      while isempty(tree[end])
+        pop!(tree)
+        pop!(path)
+        isempty(tree) &amp;&amp; break
+        pop!(tree[end])
+      end
+      isempty(tree) &amp;&amp; break
+      step = tree[end][end]
+      append!(path, step)
+    end
+  end
+  return paths
+end
+path_finding(matrix, point) = path_finding(matrix, point, point)
+
+&quot;&quot;&quot;
+将各元素按数组顺序记为二进制数
+&quot;&quot;&quot;
+function change(v::Vector)::Int128
+  v = sort(v)
+  value::Int128 = 0
+  for i in v
+    value += 1 &lt;&lt; (i - 1)
+  end
+  return value
+end</code></pre></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 26 March 2025 01:41">Wednesday 26 March 2025</span>. Using Julia version 1.11.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
