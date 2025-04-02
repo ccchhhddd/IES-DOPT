@@ -22,7 +22,7 @@
     ├── src # 项目源码
 				├── Controler # 静态仿真PID控制仿真实验
 ​        ├── Jumulink  # 动态仿真源码
-​		 		 ├── Optimization # 设计优化源码
+​		 		├── Optimization # 设计优化源码
             ├── data # 数据文件夹
             ├── function_Electricity.jl #发电设备
             ├── function_Financial.jl #经济计算
