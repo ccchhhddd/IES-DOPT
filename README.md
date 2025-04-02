@@ -2,6 +2,7 @@
 
 ## 项目结构
 
+```shell
 .
 ├── .github
     └── workflows # github actions 自动化部署配置文件
@@ -54,7 +55,7 @@
 ├── README.md # 项目说明文件
 ├── Manifest.toml # 依赖配置文件，Julia自动生成，无需手动修改
 └── Project.toml # 库环境配置文件
-
+```
 
 ## 项目前端技术
 
