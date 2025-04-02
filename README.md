@@ -21,7 +21,7 @@
 ├── backend #后端代码
     ├── src # 项目源码
 		├── Controler # 静态仿真PID控制仿真实验
-​        ├── Jumulink  # 动态仿真源码
+		├── Jumulink  # 动态仿真源码
 		├── Optimization # 设计优化源码
             ├── data # 数据文件夹
             ├── function_Electricity.jl #发电设备
@@ -35,16 +35,16 @@
             ├── function.jl #补充功能函数
             ├── function.jl #补充功能函数
             └── structs.jl # 能源系统组件
-​        ├── Simulaiton # 静态仿真源码
-		├── HeatExchanger.jl #顺逆流换热器仿真
-            ├── Thermodynamics.jl #热力循环仿真
-            └── venturiMeter.jl # 文丘里管压力分布仿真
-​        ├── backend.jl # 后端服务总文件
+	├── Simulaiton # 静态仿真源码
+			├── HeatExchanger.jl #顺逆流换热器仿真
+			├── Thermodynamics.jl #热力循环仿真
+			└── venturiMeter.jl # 文丘里管压力分布仿真
+	├── backend.jl # 后端服务总文件
 	├── function.jl # 补充功能函数
 	├── head.jl # 头文件
 	└── test.jl # 测试文件
 		├── Dockerfile # 后端镜像本地打包
-  	├── .dockerignore # docker后端镜像本地打包忽略文件
+		├── .dockerignore # docker后端镜像本地打包忽略文件
 		└── main.jl # 项目后端启动入口文件，启动服务
 ├── mock # 前端登录验证文件
 ├── public  # 全局静态资源
