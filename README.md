@@ -8,7 +8,7 @@
 	└── workflows # github actions 自动化部署配置文件
 		└── Documentation.yml # 文档部署配置文件
 ├── .vscode # vscode配置文件，本地化配置文件，一般不上传
-    └── settings.json
+	└── settings.json
 ├── Docker # Docker文件
 	├── Dockerfile # Docker配置文件
 	└── nginx.conf # ngnix服务配置文件
