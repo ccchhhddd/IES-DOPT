@@ -17,22 +17,6 @@ IES-DOPT is an open-source full-stack web platform for integrated energy system 
 | 能源系统设计优化 | 当前公开案例为离网制氢，支持设备容量选择、三类优化目标和黑箱寻优方法选择；见[案例文档](docs/src/Optimization/离网制氢.md)与[优化源码](backend/src/Optimization/optimize.jl) |
 | 可视化与表格输出 | 风光环境、系统小时运行、制氢曲线及规模与经济性表的 Excel 导出；[HTTP 接口](backend/src/backend.jl)提供 8760 小时坐标，导出实现见[前端页面](src/views/optimization/workbench/components/mode-choice/index.vue) |
 
-## 系统界面
-
-以下图片均来自仓库现有文档，展示历史版本界面，不代表本次重新运行得到的计算结果。
-
-![Jumulink 拖拽式控制系统方框图建模界面](docs/src/assets/动态仿真/Ai4EJumulink/14.png)
-
-Jumulink：组合传递函数、比例、积分、微分与输入输出模块，进行动态控制系统仿真。
-
-![离网制氢系统小时运行曲线的日视图](docs/src/assets/优化/优化__离网制氢/离网制氢__系统小时运行图（日）.png)
-
-离网制氢：按小时查看风电、光伏及补充发电功率；详细输入、输出和模型限制见[制氢案例](docs/USE_CASES.md)。
-
-![顺流逆流换热器的参数输入界面](docs/src/assets/静态仿真/顺流逆流换热器仿真/顺流逆流换热器仿真输入界面.png)
-
-静态仿真：设置流体、温度、流量及换热管长度，查看换热计算结果。
-
 ## 技术架构
 
 ```text

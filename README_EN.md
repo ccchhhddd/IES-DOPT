@@ -13,22 +13,6 @@ IES-DOPT is an **open-source full-stack web platform** for integrated energy sys
 | Energy system design optimization | The documented case is off-grid hydrogen production, with equipment capacity selection, three optimization objectives and a choice of black-box search methods. See the [case documentation](docs/src/Optimization/离网制氢.md) and [optimizer](backend/src/Optimization/optimize.jl). |
 | Visualization and export | Weather/resource, hourly operation and hydrogen-production plots, plus Excel export of scale/economics tables. The [API](backend/src/backend.jl) exposes 8760-hour axes; the [frontend](src/views/optimization/workbench/components/mode-choice/index.vue) implements table export. |
 
-## Screenshots
-
-These are existing documentation screenshots of earlier versions, not results reproduced during this documentation update.
-
-![Jumulink control-system block-diagram editor](docs/src/assets/动态仿真/Ai4EJumulink/14.png)
-
-Jumulink connects input, transfer-function, proportional, integral, differential and output blocks.
-
-![Daily view of hourly power generation in the off-grid hydrogen case](docs/src/assets/优化/优化__离网制氢/离网制氢__系统小时运行图（日）.png)
-
-The hydrogen case displays wind, solar and supplementary generation. See the [case study](docs/USE_CASES.md) for inputs, objectives and limitations.
-
-![Heat-exchanger simulation parameter input form](docs/src/assets/静态仿真/顺流逆流换热器仿真/顺流逆流换热器仿真输入界面.png)
-
-The heat-exchanger example accepts fluid, temperature, flow and tube-length inputs.
-
 ## Architecture
 
 ```text
