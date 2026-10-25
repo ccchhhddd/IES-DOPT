@@ -1,4 +1,75 @@
-# IES-DOPT 综合能源仿真优化平台开发项目
+# IES-DOPT — 综合能源系统仿真与设计优化 Web 平台
+
+**Open-source Full-stack Integrated Energy System Simulation & Optimization Platform**
+
+IES-DOPT 是基于 **Vue 3 + TypeScript + Julia** 的开源综合能源系统仿真与设计优化 Web 平台，包含 Web 前端与 Julia 计算后端源码。现有应用覆盖工程静态仿真、Jumulink 图形化动态控制系统仿真，以及**离网风光制氢系统**的容量优化、经济性分析和结果可视化。
+
+IES-DOPT is an open-source full-stack web platform for integrated energy system simulation and design optimization, with a Vue 3 frontend and a Julia scientific-computing backend. Its documented optimization case is an off-grid wind/solar-to-hydrogen system.
+
+[中文](README.md) · [English](README_EN.md) · [项目文档](https://ccchhhddd.github.io/IES-DOPT/) · [Releases](https://github.com/ccchhhddd/IES-DOPT/releases) · [FAQ](docs/PROJECT_FAQ.md) · [制氢案例](docs/USE_CASES.md)
+
+## 核心功能与证据
+
+| 功能 | 当前范围与可核验证据 |
+| --- | --- |
+| 工程静态仿真 | 朗肯、再热与制冷循环，顺逆流换热器，文丘里管压力分布，PID 控制实验；见[静态仿真文档](docs/src/index.md)与 [Julia 模型](backend/src/Simulation) |
+| 图形化动态仿真 | Jumulink 支持拖拽控制系统方框图、传递函数与响应曲线；见[操作说明](docs/src/Dynamic_simulation/Jumulink.md)、[前端](src/views/controler/scenario)和[后端](backend/src/Jumulink) |
+| 能源系统设计优化 | 当前公开案例为离网制氢，支持设备容量选择、三类优化目标和黑箱寻优方法选择；见[案例文档](docs/src/Optimization/离网制氢.md)与[优化源码](backend/src/Optimization/optimize.jl) |
+| 可视化与表格输出 | 风光环境、系统小时运行、制氢曲线及规模与经济性表的 Excel 导出；[HTTP 接口](backend/src/backend.jl)提供 8760 小时坐标，导出实现见[前端页面](src/views/optimization/workbench/components/mode-choice/index.vue) |
+
+## 系统界面
+
+以下图片均来自仓库现有文档，展示历史版本界面，不代表本次重新运行得到的计算结果。
+
+![Jumulink 拖拽式控制系统方框图建模界面](docs/src/assets/动态仿真/Ai4EJumulink/14.png)
+
+Jumulink：组合传递函数、比例、积分、微分与输入输出模块，进行动态控制系统仿真。
+
+![离网制氢系统小时运行曲线的日视图](docs/src/assets/优化/优化__离网制氢/离网制氢__系统小时运行图（日）.png)
+
+离网制氢：按小时查看风电、光伏及补充发电功率；详细输入、输出和模型限制见[制氢案例](docs/USE_CASES.md)。
+
+![顺流逆流换热器的参数输入界面](docs/src/assets/静态仿真/顺流逆流换热器仿真/顺流逆流换热器仿真输入界面.png)
+
+静态仿真：设置流体、温度、流量及换热管长度，查看换热计算结果。
+
+## 技术架构
+
+```text
+Vue 3 / TypeScript Web 前端 (src/)
+               ↕ HTTP / JSON
+Julia / Oxygen 计算后端 (backend/)
+  ├─ 工程静态仿真与 PID 控制实验
+  ├─ Jumulink 线性控制系统仿真
+  └─ 离网制氢仿真与容量优化
+```
+
+- **前端：** Vue 3、TypeScript、Vite、Naive UI、ECharts、Vue Flow；界面基于 Soybean Admin 模板。
+- **后端：** Julia、Oxygen/HTTP、ModelingToolkit、DifferentialEquations、CoolProp、BlackBoxOptim 等现有计算模块。
+- **接口：** [后端路由](backend/src/backend.jl)连接参数输入、模型计算、曲线和表格输出。前后端源码均在本仓库，可用于学习 Web 与科学计算的集成方式。
+
+## 项目状态与功能边界
+
+| 状态 | 说明 |
+| --- | --- |
+| 已实现 | 上述工程算例、Jumulink 控制系统方框图、离网制氢仿真与容量寻优已有源码、文档及历史 Release 依据；此标记不表示本次已完成运行复现 |
+| 部分实现或实验 | 离网制氢是研究原型，采用简化运行逻辑和经济假设；黑箱寻优结果不保证全局最优。8760 小时接口坐标与所选运行天数、输入数据长度仍需运行核对 |
+| 规划中 | 扩展优化场景、完善设备与运行逻辑等见 [v.2.1 后续计划](https://github.com/ccchhhddd/IES-DOPT/releases/tag/v.2.1)，不能当作当前能力 |
+
+项目面向教学研究与设计阶段分析。Jumulink 的拖拽范围是控制系统方框图，尚无证据表明支持任意综合能源拓扑自动求解；现场设备接入、生产级实时 EMS/SCADA 与多租户服务也不属于已验证能力。离网案例包含天然气补充发电，不能据此保证全流程零碳制氢。
+
+截至 2026-10-25，最近公开 Release 为 **v.2.1（2024-03-16）**。本项目的功能发布记录以 [IES-DOPT Releases](https://github.com/ccchhhddd/IES-DOPT/releases) 为准；根目录 `CHANGELOG.md` 保留了 Soybean Admin 模板历史。
+
+## 开始使用与文档
+
+- [本地开发与启动步骤](#使用说明本地开发者模式)：先核对运行环境及已知限制；当前不承诺一键启动。
+- [服务器部署原有流程](#部署服务器)：保留历史 Docker 示例，使用前核对路径、镜像名、端口及服务地址。
+- [功能文档入口](docs/src/index.md) · [在线项目文档](https://ccchhhddd.github.io/IES-DOPT/)（文档站）
+- [FAQ：前后端、拖拽范围与运行条件](docs/PROJECT_FAQ.md) · [离网制氢输入、目标与输出](docs/USE_CASES.md)
+
+## 许可证与来源
+
+仓库包含 [MIT 许可证](LICENSE)，现有版权行是 `Copyright (c) 2021 Soybean`。前端使用 [Soybean Admin](https://github.com/honghuangdc/soybean-admin) 等开源技术；请保留相关版权与来源，第三方模块的使用条件以各自许可证为准。[项目过程](#项目过程)保留项目起源与 Ai4Energy 支持说明。
 
 ## 项目结构
 
@@ -9,7 +80,7 @@
 		└── Documentation.yml # 文档部署配置文件
 ├── .vscode # vscode配置文件，本地化配置文件，一般不上传
 	└── settings.json
-├── Docker # Docker文件
+├── docker # Docker文件
 	├── Dockerfile # Docker配置文件
 	└── nginx.conf # ngnix服务配置文件
 ├── docs # 项目文档内容
@@ -32,13 +103,11 @@
 			├── optimize_test.jl #优化板块测试文件
 			├── simulate.jl #仿真功能重载总文件
 			├── simulate_test.jl #仿真板块测试文件
-			├── function.jl #补充功能函数
-			├── function.jl #补充功能函数
 			└── structs.jl # 能源系统组件
-		├── Simulaiton # 静态仿真源码
+		├── Simulation # 静态仿真源码
 			├── HeatExchanger.jl #顺逆流换热器仿真
 			├── Thermodynamics.jl #热力循环仿真
-			└── venturiMeter.jl # 文丘里管压力分布仿真
+			└── VenturiMeter.jl # 文丘里管压力分布仿真
 		├── backend.jl # 后端服务总文件
 		├── function.jl # 补充功能函数
 		├── head.jl # 头文件
@@ -48,7 +117,6 @@
 	└── main.jl # 项目后端启动入口文件，启动服务
 ├── mock # 前端登录验证文件
 ├── public  # 全局静态资源
-├── .dockerignore # docker忽略文件
 ├── .gitignore # git提交忽略文件
 ├── src # 前端源文件
 ├── package.json # 前端核心配置文件
@@ -63,13 +131,13 @@
 
 ![img](asstes/vue.png)
 
-采用[vue3](https://vuejs.org/)技术。Vue 是一种用于构建用户界面的渐进式 JavaScript 框架，功能强大且易于使用，且适用于构建交互性的 Web 界面。不同于完全成熟的应用框架，Vue 是由底层到全栈的解决方案中逐层选用的，并提供了一套声明式的、组件化的编程模型，能够高效地开发用户界面。
+本项目前端采用 [Vue 3](https://vuejs.org/) 构建参数输入、交互与结果展示界面，使用 TypeScript 组织前端代码。
 
 ### Soybean Admin 模版
 
 ![img](asstes/前端模版.png)
 
-[Soybean Admin](https://github.com/honghuangdc/soybean-admin) 是一个基于 Vue3、Vite3、TypeScript、NaiveUI、Pinia 和 UnoCSS 的清新优雅的中后台模版，它使用了最新流行的前端技术栈，内置丰富的主题配置，有着极高的代码规范，基于文件的路由系统以及基于 Mock 的动态权限路由，开箱即用的中后台前端解决方案，也可用于学习参考。
+项目前端基于 [Soybean Admin](https://github.com/honghuangdc/soybean-admin) 中后台模板，结合 Naive UI、Pinia、UnoCSS 等库构建界面。上游模板的来源与版权信息应予保留。
 
 ## 项目后端技术
 
@@ -77,15 +145,17 @@
 
 ![img](asstes/julia.png)
 
-[Julia](https://julialang.org/)是一门灵活的动态语言，适合用于科学计算和数值计算，并且性能可以与传统的静态类型语言媲美。它拥有着与 C 语言相似的高效运行速度以及类似 Ruby 的灵活动态特性，并且能够像 R 语言一样适用于各种统计分析场景，还如同 Matlab 一样能够对矩阵运算进行高效便捷的处理等，执行速度远远快于解释型语言 Python。Julia 语言在设计之初就针对高性能计算等应用场景进行了深度思考，此外还结合动态类型推导、即时编译等技术，使得运算性能超过了其他动态语言。
+[Julia](https://julialang.org/) 是面向科学与数值计算的开源编程语言。本项目使用 Julia 实现仿真模型、微分方程求解及设计优化；具体性能取决于模型、算法和运行环境，此处不作跨语言速度保证。
 
 ## 前后端交互
 
-整体采用前后端分离式的云计算架构。前端为 Web 界面，采用渐进式 JavaScript 框架 Vue3 构建交互与展示；后端为集仿真模块、优化模块，采用新一代开源科学计算编程语言 Julia 开展仿真和优化计算。前后端交互，实现数据可视化。在这种模式下，前端通过发送 HTTP 请求到后端，后端收到请求后进行数据处理运算，并返回相应的数据给前端。最终，前端对返回的数据进行渲染，生成相应的图表和动效，形式上大大提高了软件开发的灵活性，允许前端和后端团队在独立的环境中并行开发，彼此之间不会产生太多的依赖和耦合。这样可以加快开发速度，并且允许团队成员专注于自己擅长的领域。同时，前后端分离的形式使得部署和维护变得更加简单和灵活，也有助于降低系统的复杂性和维护成本。
+前端通过 HTTP 请求发送参数到 Julia 后端，后端计算后返回曲线与表格数据，前端负责可视化。接口定义见 [backend/src/backend.jl](backend/src/backend.jl)。
 
 ![img](asstes/前后端交互.png)
 
 ## 部署服务器
+
+以下为项目原有服务器部署流程，镜像账号与命名示例保留供参考。本轮未执行镜像构建或部署；使用前需核对构建目录、端口映射与服务地址。
 
 ### 前端部署
 
@@ -163,6 +233,10 @@ docker run --name [容器名] -p 8080:80 -d [镜像名]
 
 ## 使用说明(本地开发者模式)
 
+以下命令根据当前文件路径和脚本整理，本轮未安装依赖或启动服务。前端版本见 `package.json`；根目录 `Manifest.toml` 记录 Julia 1.11.2，而 `backend/Dockerfile` 使用 Julia 1.9.2，兼容范围尚需复现确认。Julia 环境文件位于仓库根目录，启动后端时工作目录需为 `backend/`。
+
+已知运行限制：部分天气数据引用与实际文件名大小写不同，区分大小写的文件系统可能无法读取；前端服务地址与跨域访问也需结合实际环境核对。本次仅更新文档，相关代码与配置保持现状。
+
 ### 先将项目克隆到本地
 
 #### 方法一：使用 GitKraken 进行项目克隆及项目相关操作（推荐）
@@ -184,46 +258,36 @@ git init
 git clone https://github.com/ccchhhddd/IES-DOPT.git
 ```
 
-如果克隆过程存在问题参考这篇文章进行解决
-https://blog.csdn.net/m0_63230155/article/details/132070860
+如果克隆过程存在问题，请参考 [GitHub 官方克隆文档](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)。
 
 ### 前端
 
 前端需要下载 node.js 使用 npm 库安装相关库以及运行相关代码
 
 ```
-npm install ——————配置环境以及安装相关包（在IES-DOPT文件下的环境运行即可）
+npm install
 ```
 
 ```
-npm run dev ——————运行程序
+npm run dev
 ```
 
 ### 后端
 
-运行时建议单独进入 backend 环境运行进入包管理模式运行如下代码进行环境激活
+在仓库根目录初始化现有 Julia 项目环境：
 
-```
-activate.
-```
-
-运行后端（文件路径: backend\src\main.jl）
-
-```
-include('main.jl')
+```shell
+julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-若出现缺包现象，进入 julia 包管理模式运行如下代码进行自动补全
+然后进入 `backend/` 启动现有入口 [backend/main.jl](backend/main.jl)，继续使用根目录环境：
 
-```
-instantiate
+```shell
+cd backend
+julia --project=.. main.jl
 ```
 
-或可以手动添加所缺的包
-
-```
-Pkg.add()
-```
+入口会加载 `backend/src/backend.jl`，当前源码监听端口为 8080。若报告缺包，请先核对根目录环境和现有依赖声明；不要将旧说明中的 `backend/src/main.jl` 当作启动入口，该文件不存在。
 
 初次进行运算时间会略长，请耐心等待
 
@@ -236,7 +300,7 @@ julia --project=docs/ -e 'using Pkg; Pkg.update(); Pkg.instantiate()'
 julia --project=docs/ docs/make.jl
 ```
 
-PS:`./src`中包含了文档中的一些代码与相关资源
+`docs/src/` 中包含文档正文、相关代码说明与图片资源。
 
 ## 项目过程
 
